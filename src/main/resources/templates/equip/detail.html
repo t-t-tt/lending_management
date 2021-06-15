@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- 今回のサンプルで使用しているCSS（bootstrap）の読み込み -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+	integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+	crossorigin="anonymous">
+<title>機器詳細</title>
+</head>
+<body>
+	<div class="login align-items-center py-5">
+		<div class="d-flex flex-row">
+			<div th:insert="~{common :: side_bar}" class="col-2"></div>
+			<div class="row col-10">
+				<div class="col-md-9 col-lg-8 mx-auto">
+					<h3 class="login-heading my-4">機器詳細</h3>
+					<ul class="d-flex flex-row list-unstyled justify-content-end">
+						<li class="mr-3">登録日：<span th:text="${#dates.format(equip.registrationDate,'yyyy-MM-dd')}"></span></li>
+						<li>更新日：<span th:text="${#dates.format(equip.updateDate,'yyyy-MM-dd')}"></span></li>
+					</ul>
+					<form th:action="@{{id}/update(id=${equip.id})}" name="equip" method="post"
+						th:object="${equip}">
+						<div class="form-label-group">
+							<label for="asset">資産番号</label> <input type="text" id="asset"
+								name="asset" class="form-control" th:value="*{asset}">
+						</div>
+						<div class="form-label-group">
+							<label for="maker">メーカー</label> <input type="text" id="maker"
+								name="maker" class="form-control" th:value="*{maker}">
+						</div>
+						<div class="form-label-group">
+							<label for="os">OS</label> <input type="text" id="os" name="os"
+								class="form-control" th:value="*{os}">
+						</div>
+						<div class="form-label-group">
+							<label for="memory">メモリ</label> <input type="text" id="memory"
+								name="memory" class="form-control" th:value="*{memory}">
+						</div>
+						<div class="form-label-group">
+							<label for="capacity">容量</label> <input type="text" id="capacity"
+								name="capacity" class="form-control" th:value="*{capacity}">
+						</div>
+						<div class="form-label-group mt-3 mb-3">
+							<label for="hasGraphicBoard">グラフィックボード</label> <input
+								type="checkbox" id="hasGraphicBoard" name="hasGraphicBoard"
+								th:checked="*{hasGraphicBoard}" th:value="on">
+						</div>
+						<div class="form-label-group mt-3 mb-3">
+							<label for="isBroken">故障</label> <input type="checkbox"
+								id="isBroken" name="isBroken" th:checked="*{isBroken}" th:value="on">
+						</div>
+						<div class="form-label-group">
+							<label for="storageLocation">保管場所</label> <input type="text"
+								id="storageLocation" name="storageLocation" class="form-control" th:value="*{storageLocation}">
+						</div>
+						<div class="form-label-group">
+							<label for="leaseStart">リース開始日</label> <input type="date"
+								id="leaseStart" name="leaseStart" class="form-control"
+								th:value="${(equip.leaseStart != null) ? #dates.format(equip.leaseStart,'yyyy-MM-dd') : null}">
+						</div>
+						<div class="form-label-group">
+							<label for="leaseEnd">リース期限日</label> <input type="date"
+								id="leaseEnd" name="leaseEnd" class="form-control"
+								th:value="${(equip.leaseEnd != null) ? #dates.format(equip.leaseEnd,'yyyy-MM-dd') : null}">
+						</div>
+						<div class="form-label-group">
+							<label for="inventoryDate">棚卸日</label> <input type="date"
+								id="inventoryDate" name="inventoryDate" class="form-control"
+								th:value="${(equip.inventoryDate!= null) ? #dates.format(equip.inventoryDate,'yyyy-MM-dd') : null}">
+						</div>
+						<div class="form-label-group">
+							<label for="remarks">備考</label> <input type="text" id="remarks"
+								name="remarks" class="form-control" th:value="*{remarks}">
+						</div>
+						<br>
+						<button
+							class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2 lg-4"
+							type="submit">保存</button>
+					</form>
+					<a th:href="@{{id}/delete(id=${equip.id})}">削除</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
