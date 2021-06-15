@@ -22,7 +22,7 @@ public interface LendRepository extends JpaRepository<LendEntity, Integer> {
 	 * @param
 	 * @return 機器一覧（未削除）
 	 */
-	public List<LendEntity> findByIsDeletedFalse();
+	public List<LendEntity> findAll();
 
 	public void deleteByEquipId(Integer equipId);
 }

@@ -17,7 +17,7 @@ import taro.repository.LendRepository;
 import taro.repository.UserRepository;
 
 /**
- * イベント参加者のService実装クラスです.
+ * 貸出のService実装クラスです.
  */
 @Service
 public class LendServiceImpl implements LendService {
@@ -33,8 +33,8 @@ public class LendServiceImpl implements LendService {
 	 * @param
 	 * @return 貸出一覧（未削除）
 	 */
-	public List<LendEntity> findByIsDeletedFalse() {
-		return lendRepository.findByIsDeletedFalse();
+	public List<LendEntity> findAll() {
+		return lendRepository.findAll();
 	}
 
 	/**
@@ -45,34 +45,37 @@ public class LendServiceImpl implements LendService {
 	@Transactional
 	public void rentPc(LendForm lendForm) {
 		//機器コードを検索
-		EquipEntity equip = equipRepository.findOneByAsset(lendForm.getAsset());
-		//機器レコードがnull or 貸し出されていない
-		if (equip == null || !equip.getIsLent())
-			return;
-
-		//機器レコードが存在
-		UserEntity user = userRepository.findOneByEmployeeNumber(lendForm.getEmployeeNumber());
-
-		//機器レコードがnull
-		if (user == null)
+		EquipEntity equip = equipRepository.findOneById(lendForm.getEquipId());
+		System.out.println(equip);
+		//機器レコードがnull or 貸出中
+		if (equip == null || equip.getIsLent())
 			return;
 		else {
-			//機器レコード書き換え
-			equip.setIsLent(true);
-			equipRepository.save(equip);
+			//機器レコードが存在
+			UserEntity user = userRepository.findOneById(lendForm.getUserId());
+			System.out.println(user);
 
-			//貸出レコードに追加
-			LendEntity lend = new LendEntity();
-			lend.setEquipId(equip.getId());
-			lend.setUserId(user.getId());
-			lend.setLendStart(lendForm.getLendStart());
-			lend.setLendEnd(lendForm.getLendEnd());
-			lend.setRemarks(lendForm.getRemarks());
-			lend.setRegistrationDate(new Date(System.currentTimeMillis()));
-			lend.setUpdateDate(new Date(System.currentTimeMillis()));
+			//機器レコードがnull
+			if (user == null)
+				return;
+			else {
+				//機器レコード書き換え
+				equip.setIsLent(true);
+				equipRepository.save(equip);
 
-			// LendEntityクラスの情報を使ってDBに登録する処理を実行
-			lendRepository.save(lend);
+				//貸出レコードに追加
+				LendEntity lend = new LendEntity();
+				lend.setEquipId(lendForm.getEquipId());
+				lend.setUserId(lendForm.getUserId());
+				lend.setLendStart(lendForm.getLendStart());
+				lend.setLendEnd(lendForm.getLendEnd());
+				lend.setRemarks(lendForm.getRemarks());
+				lend.setRegistrationDate(new Date(System.currentTimeMillis()));
+				lend.setUpdateDate(new Date(System.currentTimeMillis()));
+
+				// LendEntityクラスの情報を使ってDBに登録する処理を実行
+				lendRepository.save(lend);
+			}
 		}
 	}
 
@@ -85,23 +88,22 @@ public class LendServiceImpl implements LendService {
 	@Transactional
 	public void dropOffPc(LendForm lendForm) {
 		//機器コードを検索
-		EquipEntity equip = equipRepository.findOneByAsset(lendForm.getAsset());
+		EquipEntity equip = equipRepository.findOneById(lendForm.getEquipId());
 
 		//機器レコードがnull or 貸し出されていない
-		if (equip == null || equip.getIsLent())
-			return;
-
-		LendEntity lend = lendRepository.findOneByEquipId(equip.getId());
-
-		UserEntity user = userRepository.findOneById(lend.getUserId());
-
-		//機器レコードがnull
-		if (user == null)
+		if (equip == null || !equip.getIsLent())
 			return;
 		else {
-			equip.setIsLent(false);
-			equipRepository.save(equip);
-			lendRepository.deleteById(lend.getId());
+			UserEntity user = userRepository.findOneById(lendForm.getUserId());
+			//機器レコードがnull
+			if (user == null)
+				return;
+			else {
+				LendEntity lend = lendRepository.findOneByEquipId(equip.getId());
+				equip.setIsLent(false);
+				equipRepository.save(equip);
+				lendRepository.deleteById(lend.getId());
+			}
 		}
 
 	}

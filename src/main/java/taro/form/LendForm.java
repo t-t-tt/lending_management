@@ -2,7 +2,6 @@ package taro.form;
 
 import java.sql.Date;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -13,11 +12,11 @@ import lombok.Data;
 @Data
 public class LendForm {
 	// 資産番号
-	@NotBlank
-	private String asset;
+	@NotNull
+	private Integer equipId;
 	// 社員番号
-	@NotBlank
-	private String employeeNumber;
+	@NotNull
+	private Integer userId;
 	// リース開始日
 	@NotNull
 	private Date lendStart;

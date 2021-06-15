@@ -7,7 +7,7 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
 	integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
 	crossorigin="anonymous">
-<title>ユーザー一覧</title>
+<title>貸出管理画面</title>
 </head>
 <body>
 	<div class="login align-items-center py-5">
@@ -15,51 +15,37 @@
 			<div th:insert="~{common :: side_bar}" class="col-2"></div>
 			<div class="row col-10">
 				<div class="col-md-12 col-lg-12">
-					<h3 class="login-heading my-4">ユーザー一覧</h3>
+					<h3 class="login-heading my-4">貸出管理画面</h3>
 					<!-- Thymeleafの繰り返し処理 -->
-					<!-- modelにusersというキーでセットされてきたリストを繰り返しで表示 -->
-					<!-- リスト（配列）のusersから1ずつ要素を取得してuser（変数）に格納 -->
-					<div class="d-flex flex-row-reverse">
-						<form action="regist" method="get">
-							<button
-								class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-								type="submit">新規ユーザー登録</button>
-						</form>
+					<!-- modelにlendsというキーでセットされてきたリストを繰り返しで表示 -->
+					<!-- リスト（配列）のlendsから1ずつ要素を取得してlend（変数）に格納 -->
+					<div class="d-flex flex-row justify-content-end">
+						<ul>
+							<li>貸出PC：<span th:text=${lentedPcNum}></span>台
+							</li>
+							<li>空きPC：<span th:text=${notLentedPcNum}></span>台
+							</li>
+						</ul>
 					</div>
 
 					<table class="table table-striped">
-						<!-- user（UserListクラス）のgetNameメソッドを実行して名前を画面に表示 -->
+						<!-- lend（lendListクラス）のgetNameメソッドを実行して名前を画面に表示 -->
 						<tr>
-							<th>社員番号</th>
-							<th>氏名</th>
-							<th>氏名（カタカナ）</th>
-							<th>所属部署</th>
-							<th>電話番号</th>
-							<th>メールアドレス</th>
-							<th>年齢</th>
-							<th>性別</th>
-							<th>役職</th>
-							<th>PCアカウント権限</th>
+							<th>貸出ID</th>
+							<th>機器ID</th>
+							<th>ユーザーID</th>
 							<th>登録日</th>
 							<th>更新日</th>
-							<th>退職日</th>
+							<th>備考</th>
 						</tr>
-						<tr th:each="user : ${userList}">
-							<td><a
-								th:href="@{/user/{id}(id=${user.id})}"
-								th:text="${user.employeeNumber}"></a></td>
-							<td th:text="${user.name}"></td>
-							<td th:text="${user.nameKana}"></td>
-							<td th:text="${user.department}"></td>
-							<td th:text="${user.telNumber}"></td>
-							<td th:text="${user.mail}"></td>
-							<td th:text="${user.age}"></td>
-							<td th:text="${user.gender}"></td>
-							<td th:text="${user.position}"></td>
-							<td th:text="${user.privilege}"></td>
-							<td th:text="${#dates.format(user.registrationDate, 'yyyy/MM/dd')}"></td>
-							<td th:text="${#dates.format(user.updateDate, 'yyyy/MM/dd')}"></td>
-							<td th:text="${#dates.format(user.retirementDate, 'yyyy/MM/dd')}"></td>
+						<tr th:each="lend : ${lendList}">
+							<td th:text="${lend.id}"></td>
+							<td th:text="${lend.equipId}"></td>
+							<td th:text="${lend.userId}"></td>
+							<td
+								th:text="${#dates.format(lend.registrationDate, 'yyyy/MM/dd')}"></td>
+							<td th:text="${#dates.format(lend.updateDate, 'yyyy/MM/dd')}"></td>
+							<td th:text="${lend.remarks}"></td>
 						</tr>
 					</table>
 					<br>
