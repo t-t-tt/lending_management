@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 /**
- * event_entryテーブルのEntityクラスです
+ * userテーブルのEntityクラスです
  */
 @Data
 @Entity

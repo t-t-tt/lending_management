@@ -54,10 +54,9 @@ public class UserController {
 	 * @return ユーザー一覧画面のパス
 	 */
 	@GetMapping("/user/{id}")
-	public String userDetail(@PathVariable("id") Integer id,Model model) {
+	public String userDetail(@PathVariable("id") Integer id, Model model) {
 		// DBに登録されているユーザーの一覧を取得
 		UserEntity user = userService.findOneById(id);
-		System.out.println(user);
 
 		// modelにイベントの一覧をセット
 		model.addAttribute("user", user);
@@ -84,7 +83,7 @@ public class UserController {
 	 */
 	@PostMapping("/user/add")
 	public String userAdd(@Validated @ModelAttribute("user") UserForm userForm, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			System.out.println(userForm);
 			return "redirect:/user/regist";
 		}
@@ -101,8 +100,9 @@ public class UserController {
 	 * @return ユーザー一覧画面のパス
 	 */
 	@PostMapping("/user/{id}/update")
-	public String userUpdate(@PathVariable("id") Integer id,@Validated @ModelAttribute("user") UserForm userForm, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()) {
+	public String userUpdate(@PathVariable("id") Integer id, @Validated @ModelAttribute("user") UserForm userForm,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
 			System.out.println(userForm);
 			return "error.html";
 		}

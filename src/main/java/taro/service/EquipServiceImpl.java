@@ -50,14 +50,15 @@ public class EquipServiceImpl implements EquipService {
 		equip.setOs(equipForm.getOs());
 		equip.setMemory(equipForm.getMemory());
 		equip.setCapacity(equipForm.getCapacity());
-		equip.setHasGraphicBoard(equipForm.getHasGraphicBoard() == "on");
-		equip.setIsBroken(equipForm.getIsBroken() == "on");
+		equip.setHasGraphicBoard(equipForm.getHasGraphicBoard());
+		equip.setIsBroken(equipForm.getIsBroken());
 		equip.setIsDeleted(false);
 		equip.setIsLent(false);
 		equip.setStorageLocation(equipForm.getStorageLocation());
-		equip.setLeaseStart(equipForm.getLeaseStart());
-		equip.setLeaseEnd(equipForm.getLeaseEnd());
-		equip.setInventoryDate(equipForm.getInventoryDate());
+		equip.setLeaseStart(Date.valueOf(equipForm.getLeaseStart()));
+		equip.setLeaseEnd(Date.valueOf(equipForm.getLeaseEnd()));
+		if (equipForm.getInventoryDate() != null && equipForm.getInventoryDate() != "")
+			equip.setInventoryDate(Date.valueOf(equipForm.getInventoryDate()));
 		equip.setRemarks(equipForm.getRemarks());
 		equip.setRegistrationDate(new Date(System.currentTimeMillis()));
 		equip.setUpdateDate(new Date(System.currentTimeMillis()));
@@ -75,18 +76,18 @@ public class EquipServiceImpl implements EquipService {
 	public void save(Integer id, EquipForm equipForm) {
 		// EquipForm内の情報をEquipEntityクラスに詰め替え
 		EquipEntity equip = equipRepository.findOneById(id);
-		System.out.println(equip);
 		equip.setAsset(equipForm.getAsset());
 		equip.setMaker(equipForm.getMaker());
 		equip.setOs(equipForm.getOs());
 		equip.setMemory(equipForm.getMemory());
 		equip.setCapacity(equipForm.getCapacity());
-		equip.setHasGraphicBoard(equipForm.getHasGraphicBoard() == "on");
-		equip.setIsBroken(equipForm.getIsBroken() == "on");
+		equip.setHasGraphicBoard(equipForm.getHasGraphicBoard());
+		equip.setIsBroken(equipForm.getIsBroken());
 		equip.setStorageLocation(equipForm.getStorageLocation());
-		equip.setLeaseStart(equipForm.getLeaseStart());
-		equip.setLeaseEnd(equipForm.getLeaseEnd());
-		equip.setInventoryDate(equipForm.getInventoryDate());
+		equip.setLeaseStart(Date.valueOf(equipForm.getLeaseStart()));
+		equip.setLeaseEnd(Date.valueOf(equipForm.getLeaseEnd()));
+		if (equipForm.getInventoryDate() != null && equipForm.getInventoryDate() != "")
+			equip.setInventoryDate(Date.valueOf(equipForm.getInventoryDate()));
 		equip.setRemarks(equipForm.getRemarks());
 		equip.setUpdateDate(new Date(System.currentTimeMillis()));
 

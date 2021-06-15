@@ -1,12 +1,8 @@
 package taro.form;
 
-import java.sql.Date;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.lang.Nullable;
 
 import lombok.Data;
 
@@ -47,6 +43,5 @@ public class UserForm {
 	private String privilege;
 
 	// 退職日
-	@Nullable
-	private Date retirementDate;
+	private String retirementDate;
 }

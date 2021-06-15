@@ -1,7 +1,6 @@
 package taro.form;
 
-import java.sql.Date;
-
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -18,11 +17,11 @@ public class LendForm {
 	@NotNull
 	private Integer userId;
 	// リース開始日
-	@NotNull
-	private Date lendStart;
+	@NotBlank
+	private String lendStart;
 	// リース期限日
-	@NotNull
-	private Date lendEnd;
+	@NotBlank
+	private String lendEnd;
 	// 備考
 	private String remarks;
 }

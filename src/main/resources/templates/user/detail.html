@@ -17,7 +17,8 @@
 				<div class="col-md-9 col-lg-8 mx-auto">
 					<h3 class="login-heading my-4">ユーザー詳細</h3>
 					<ul class="d-flex flex-row list-unstyled justify-content-end">
-						<li class="mr-3">登録日：<span th:text="${#dates.format(user.registrationDate,'yyyy-MM-dd')}"></span></li>
+						<li class="mr-3">登録日：<span
+							th:text="${#dates.format(user.registrationDate,'yyyy-MM-dd')}"></span></li>
 						<li>更新日：<span th:text=${#dates.format(user.updateDate,'yyyy-MM-dd')}></span></li>
 					</ul>
 					<form th:action="@{{id}/update(id=${user.id})}" name="user"
@@ -55,23 +56,38 @@
 								name="age" class="form-control" th:value="*{age}">
 						</div>
 						<div class="form-label-group">
-							<label for="gender">性別</label> <input type="text" id="gender"
-								name="gender" class="form-control" th:value="*{gender}">
+							<label for="gender">性別</label>
+							<div class="radio">
+								<input type="radio" value="男" name="gender" id="male"
+									th:checked="${user.gender == '男'}"> <label for="male">男</label>
+							</div>
+							<div class="radio">
+								<input type="radio" value="女" name="gender" id="female"
+									th:checked="${user.gender == '女'}"> <label for="female">女</label>
+							</div>
 						</div>
 						<div class="form-label-group">
 							<label for="position">役職</label> <input type="text" id="position"
 								name="position" class="form-control" th:value="*{position}">
 						</div>
 						<div class="form-label-group">
-							<label for="privilege">PCアカウント権限</label> <input type="text"
-								id="privilege" name="privilege" class="form-control"
-								th:value="*{privilege}">
+							<label for="privilege">PCアカウント権限</label>
+							<div class="radio">
+								<input type="radio" value="利用者" name="privilege" id="general"
+									th:checked="${user.privilege == '利用者'}"> <label
+									for="general">利用者</label>
+							</div>
+							<div class="radio">
+								<input type="radio" value="管理者" name="privilege"
+									id="administrator" th:checked="${user.privilege == '管理者'}">
+								<label for="administrator">管理者</label>
+							</div>
 						</div>
 
 						<div class="form-label-group">
 							<label for="retirementDate">退職日</label> <input type="date"
 								id="retirementDate" name="retirementDate" class="form-control"
-								th:value="${(user.retirementDate != null) ? #dates.format(user.retirementDate,'yyyy-MM-dd') : null}">
+								th:value="${(user.retirementDate != null) ? #dates.format(user.retirementDate,'yyyy-MM-dd') : ''}">
 						</div>
 						<br>
 						<button

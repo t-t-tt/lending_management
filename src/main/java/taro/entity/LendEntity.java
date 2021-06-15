@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 /**
- * eventテーブルのEntityクラスです
+ * lendテーブルのEntityクラスです
  */
 @Data
 @Entity

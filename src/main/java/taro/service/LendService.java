@@ -2,7 +2,7 @@ package taro.service;
 
 import java.util.List;
 
-import taro.entity.LendEntity;
+import taro.entity.LendingManagement;
 import taro.form.LendForm;
 
 /**
@@ -21,7 +21,7 @@ public interface LendService {
 	 * @param
 	 * @return 貸出一覧（未削除）
 	 */
-	public List<LendEntity> findAll();
+	public List<LendingManagement> findAll();
 
 	/**
 	 * 貸出情報をDBに登録します.

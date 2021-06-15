@@ -40,11 +40,13 @@
 						<div class="form-label-group mt-3 mb-3">
 							<label for="hasGraphicBoard">グラフィックボード</label> <input
 								type="checkbox" id="hasGraphicBoard" name="hasGraphicBoard"
-								th:checked="${false}" th:value="on">
+								>
+								<input type="hidden" name="hasGraphicBoard" value="false">
 						</div>
 						<div class="form-label-group mt-3 mb-3">
 							<label for="isBroken">故障</label> <input type="checkbox"
-								id="isBroken" name="isBroken" th:checked="${false}" th:value="on">
+								id="isBroken" name="isBroken">
+								<input type="hidden" name="isBroken" value="false">
 						</div>
 						<div class="form-label-group">
 							<label for="storageLocation">保管場所</label> <input type="text"

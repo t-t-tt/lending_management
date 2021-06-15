@@ -56,7 +56,8 @@ public class UserServiceImpl implements UserService {
 		user.setPosition(userForm.getPosition());
 		user.setPrivilege(userForm.getPrivilege());
 		user.setRegistrationDate(new Date(System.currentTimeMillis()));
-		user.setRetirementDate(userForm.getRetirementDate());
+		if (userForm.getRetirementDate() != null && userForm.getRetirementDate() != "")
+			user.setRetirementDate(Date.valueOf(userForm.getRetirementDate()));
 		user.setTelNumber(userForm.getTelNumber());
 		user.setUpdateDate(new Date(System.currentTimeMillis()));
 
@@ -84,7 +85,8 @@ public class UserServiceImpl implements UserService {
 		user.setNameKana(userForm.getNameKana());
 		user.setPosition(userForm.getPosition());
 		user.setPrivilege(userForm.getPrivilege());
-		user.setRetirementDate(userForm.getRetirementDate());
+		if (userForm.getRetirementDate() != null && userForm.getRetirementDate() != "")
+			user.setRetirementDate(Date.valueOf(userForm.getRetirementDate()));
 		user.setTelNumber(userForm.getTelNumber());
 		user.setUpdateDate(new Date(System.currentTimeMillis()));
 

@@ -1,5 +1,7 @@
 package taro.controller;
 
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import taro.entity.EquipEntity;
-import taro.entity.LendEntity;
+import taro.entity.LendingManagement;
 import taro.entity.UserEntity;
 import taro.form.LendForm;
 import taro.service.EquipService;
@@ -48,21 +50,25 @@ public class LendController {
 	@GetMapping("/lend/list")
 	public String lendList(Model model) {
 		// DBに登録されている貸出の一覧を取得
-		List<EquipEntity> equipList = equipService.findByIsDeletedFalse();
-		List<UserEntity> userList = userService.findByIsDeletedFalse();
-		List<LendEntity> lendList = lendService.findAll();
-		System.out.println(lendList.size()+"貸出一覧");
+		List<LendingManagement> lendingManagementList = lendService.findAll();
+		List<LendingManagement> expiredList = new ArrayList<LendingManagement>();
+		System.out.println(lendingManagementList.size()+"貸出一覧");
 
 		int letedPcNum = 0;
-		for (EquipEntity equip:equipList) {
-			if(equip.getIsLent()) letedPcNum++;
+		Date today = new Date(System.currentTimeMillis());
+
+		for (LendingManagement lending:lendingManagementList) {
+			if(lending.getEquip().getIsLent()) letedPcNum++;
+			if(lending.getLend() != null && lending.getLend().getLendEnd().before(today)) {
+				expiredList.add(lending);
+			}
 		}
+
 		// modelにイベントの一覧をセット
-		model.addAttribute("equipList", equipList);
-		model.addAttribute("userList", userList);
-		model.addAttribute("lendList", lendList);
+		model.addAttribute("lendingManagementList", lendingManagementList);
+		model.addAttribute("expiredList", expiredList);
 		model.addAttribute("lentedPcNum", letedPcNum);
-		model.addAttribute("notLentedPcNum", (lendList.size() - letedPcNum));
+		model.addAttribute("notLentedPcNum", (lendingManagementList.size() - letedPcNum));
 
 		// 次に表示する画面のパスを返却
 		return "lend/list";
@@ -91,10 +97,10 @@ public class LendController {
 	 */
 	@PostMapping("/lend/rent")
 	public String rentPc(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult) {
-//		if(bindingResult.hasErrors()) {
-//			System.out.println(lendForm);
-//			return "redirect:/lend/regist";
-//		}
+		//		if(bindingResult.hasErrors()) {
+		//			System.out.println(lendForm);
+		//			return "redirect:/lend/regist";
+		//		}
 		System.out.println(lendForm);
 		// DBに登録
 		lendService.rentPc(lendForm);
@@ -110,10 +116,10 @@ public class LendController {
 	 */
 	@PostMapping("/lend/dropoff")
 	public String dropOffPc(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult) {
-//		if(bindingResult.hasErrors()) {
-//			System.out.println(lendForm);
-//			return "error.html";
-//		}
+		//		if(bindingResult.hasErrors()) {
+		//			System.out.println(lendForm);
+		//			return "error.html";
+		//		}
 		// DBに登録
 		lendService.dropOffPc(lendForm);
 

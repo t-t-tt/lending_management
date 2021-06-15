@@ -46,16 +46,30 @@
 								name="age" class="form-control">
 						</div>
 						<div class="form-label-group">
-							<label for="gender">性別</label> <input type="text" id="gender"
-								name="gender" class="form-control">
+							<label for="gender">性別</label>
+							<div class="radio">
+								<input type="radio" value="男" name="gender" id="male" checked>
+								<label for="male">男</label>
+							</div>
+							<div class="radio">
+								<input type="radio" value="女" name="gender" id="female">
+								<label for="female">女</label>
+							</div>
 						</div>
 						<div class="form-label-group">
-							<label for="position">役職</label> <input type="text" id="position"
-								name="position" class="form-control">
+							<label for="position">役職</label> <input type="text"
+								id="position" name="position" class="form-control">
 						</div>
 						<div class="form-label-group">
-							<label for="privilege">PCアカウント権限</label> <input type="text"
-								id="privilege" name="privilege" class="form-control">
+							<label for="privilege">PCアカウント権限</label>
+							<div class="radio">
+								<input type="radio" value="利用者" name="privilege" id="general"
+									checked> <label for="general">利用者</label>
+							</div>
+							<div class="radio">
+								<input type="radio" value="管理者" name="privilege"
+									id="administrator"> <label for="administrator">管理者</label>
+							</div>
 						</div>
 
 						<br>

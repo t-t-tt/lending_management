@@ -16,9 +16,6 @@
 			<div class="row col-10">
 				<div class="col-md-12 col-lg-12">
 					<h3 class="login-heading my-4">貸出管理画面</h3>
-					<!-- Thymeleafの繰り返し処理 -->
-					<!-- modelにlendsというキーでセットされてきたリストを繰り返しで表示 -->
-					<!-- リスト（配列）のlendsから1ずつ要素を取得してlend（変数）に格納 -->
 					<div class="d-flex flex-row justify-content-end">
 						<ul>
 							<li>貸出PC：<span th:text=${lentedPcNum}></span>台
@@ -28,24 +25,72 @@
 						</ul>
 					</div>
 
+					<p>貸出期限の過ぎたPC一覧</p>
 					<table class="table table-striped">
 						<!-- lend（lendListクラス）のgetNameメソッドを実行して名前を画面に表示 -->
 						<tr>
-							<th>貸出ID</th>
-							<th>機器ID</th>
-							<th>ユーザーID</th>
-							<th>登録日</th>
-							<th>更新日</th>
+							<th>NO</th>
+							<th>資産番号</th>
+							<th>メーカー</th>
+							<th>OS</th>
+							<th>保管場所</th>
+							<th>空き</th>
+							<th>使用者：社員番号</th>
+							<th>社員氏名</th>
+							<th>貸出日</th>
+							<th>返却日</th>
+							<th>棚卸日</th>
 							<th>備考</th>
 						</tr>
-						<tr th:each="lend : ${lendList}">
-							<td th:text="${lend.id}"></td>
-							<td th:text="${lend.equipId}"></td>
-							<td th:text="${lend.userId}"></td>
+						<tr th:each="lm : ${expiredList}">
+							<td th:text="${lm.count}"></td>
+							<td th:text="${lm.equip.asset}"></td>
+							<td th:text="${lm.equip.maker}"></td>
+							<td th:text="${lm.equip.os}"></td>
 							<td
-								th:text="${#dates.format(lend.registrationDate, 'yyyy/MM/dd')}"></td>
-							<td th:text="${#dates.format(lend.updateDate, 'yyyy/MM/dd')}"></td>
-							<td th:text="${lend.remarks}"></td>
+								th:text="${lm.user != null ? (lm.user.name + 'さんに貸出中') : lm.equip.storageLocation}"></td>
+							<td th:text="${lm.equip.isLent ? '貸出中' : '○'}"></td>
+							<td th:text="${lm.user != null ? lm.user.employeeNumber : ''}"></td>
+							<td th:text="${lm.user != null ? lm.user.name : ''}"></td>
+							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendStart,'yyyy-MM-dd') : ''}"></td>
+							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendEnd,'yyyy-MM-dd') : ''}"></td>
+							<td th:text="${lm.equip.inventoryDate}"></td>
+							<td th:text="${lm.lend != null ? lm.lend.remarks : ''}"></td>
+						</tr>
+					</table>
+
+					<br>
+					<p>管理台帳</p>
+					<table class="table table-striped">
+						<!-- lend（lendListクラス）のgetNameメソッドを実行して名前を画面に表示 -->
+						<tr>
+							<th>NO</th>
+							<th>資産番号</th>
+							<th>メーカー</th>
+							<th>OS</th>
+							<th>保管場所</th>
+							<th>空き</th>
+							<th>使用者：社員番号</th>
+							<th>社員氏名</th>
+							<th>貸出日</th>
+							<th>返却日</th>
+							<th>棚卸日</th>
+							<th>備考</th>
+						</tr>
+						<tr th:each="lm : ${lendingManagementList}">
+							<td th:text="${lm.count}"></td>
+							<td th:text="${lm.equip.asset}"></td>
+							<td th:text="${lm.equip.maker}"></td>
+							<td th:text="${lm.equip.os}"></td>
+							<td
+								th:text="${lm.user != null ? (lm.user.name + 'さんに貸出中') : lm.equip.storageLocation}"></td>
+							<td th:text="${lm.equip.isLent ? '貸出中' : '○'}"></td>
+							<td th:text="${lm.user != null ? lm.user.employeeNumber : ''}"></td>
+							<td th:text="${lm.user != null ? lm.user.name : ''}"></td>
+							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendStart,'yyyy-MM-dd') : ''}"></td>
+							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendEnd,'yyyy-MM-dd') : ''}"></td>
+							<td th:text="${lm.equip.inventoryDate}"></td>
+							<td th:text="${lm.lend != null ? lm.lend.remarks : ''}"></td>
 						</tr>
 					</table>
 					<br>

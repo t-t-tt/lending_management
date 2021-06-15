@@ -1,6 +1,7 @@
 package taro.service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import taro.entity.EquipEntity;
 import taro.entity.LendEntity;
+import taro.entity.LendingManagement;
 import taro.entity.UserEntity;
 import taro.form.LendForm;
 import taro.repository.EquipRepository;
@@ -33,8 +35,25 @@ public class LendServiceImpl implements LendService {
 	 * @param
 	 * @return 貸出一覧（未削除）
 	 */
-	public List<LendEntity> findAll() {
-		return lendRepository.findAll();
+	@Transactional
+	public List<LendingManagement> findAll() {
+		List<EquipEntity> equipList = equipRepository.findByIsDeletedFalse();
+		List<LendingManagement> lendManagementList = new ArrayList<LendingManagement>();
+		Integer count = 1;
+		for(EquipEntity equip: equipList) {
+			LendingManagement lendingManagement = new LendingManagement();
+			lendingManagement.setEquip(equip);
+			lendingManagement.setCount(count++);
+			if(equip.getIsLent()) {
+				LendEntity lend = lendRepository.findOneByEquipId(equip.getId());
+				UserEntity user = userRepository.findOneById(lend.getUserId());
+				lendingManagement.setUser(user);
+				lendingManagement.setLend(lend);;
+			}
+			lendManagementList.add(lendingManagement);
+		}
+		System.out.println(lendManagementList);
+		return lendManagementList;
 	}
 
 	/**
@@ -67,8 +86,8 @@ public class LendServiceImpl implements LendService {
 				LendEntity lend = new LendEntity();
 				lend.setEquipId(lendForm.getEquipId());
 				lend.setUserId(lendForm.getUserId());
-				lend.setLendStart(lendForm.getLendStart());
-				lend.setLendEnd(lendForm.getLendEnd());
+				lend.setLendStart(Date.valueOf(lendForm.getLendStart()));
+				lend.setLendEnd(Date.valueOf(lendForm.getLendEnd()));
 				lend.setRemarks(lendForm.getRemarks());
 				lend.setRegistrationDate(new Date(System.currentTimeMillis()));
 				lend.setUpdateDate(new Date(System.currentTimeMillis()));

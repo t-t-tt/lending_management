@@ -92,10 +92,10 @@ public class EquipController {
 	 */
 	@PostMapping("/equip/add")
 	public String equipAdd(@Validated @ModelAttribute("equip") EquipForm equipForm, BindingResult bindingResult) {
-//		if(bindingResult.hasErrors()) {
-//			System.out.println(equipForm);
-//			return "redirect:/equip/regist";
-//		}
+		if(bindingResult.hasErrors()) {
+			System.out.println(equipForm);
+			return "redirect:/equip/regist";
+		}
 		System.out.println(equipForm);
 		// DBに登録
 		equipService.save(equipForm);
@@ -111,10 +111,10 @@ public class EquipController {
 	 */
 	@PostMapping("/equip/{id}/update")
 	public String equipUpdate(@PathVariable("id") Integer id,@Validated @ModelAttribute("equip") EquipForm equipForm, BindingResult bindingResult) {
-//		if(bindingResult.hasErrors()) {
-//			System.out.println(equipForm);
-//			return "error.html";
-//		}
+		if(bindingResult.hasErrors()) {
+			System.out.println(equipForm);
+			return "error.html";
+		}
 		// DBに登録
 		equipService.save(id, equipForm);
 
