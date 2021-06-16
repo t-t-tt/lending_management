@@ -17,11 +17,21 @@
 				<div class="col-md-9 col-lg-8 mx-auto">
 					<h3 class="login-heading my-4">機器詳細</h3>
 					<ul class="d-flex flex-row list-unstyled justify-content-end">
-						<li class="mr-3">登録日：<span th:text="${#dates.format(equip.registrationDate,'yyyy-MM-dd')}"></span></li>
-						<li>更新日：<span th:text="${#dates.format(equip.updateDate,'yyyy-MM-dd')}"></span></li>
+						<li class="mr-3">登録日：<span
+							th:text="${#dates.format(equip.registrationDate,'yyyy-MM-dd')}"></span></li>
+						<li>更新日：<span
+							th:text="${#dates.format(equip.updateDate,'yyyy-MM-dd')}"></span></li>
 					</ul>
-					<form th:action="@{{id}/update(id=${equip.id})}" name="equip" method="post"
-						th:object="${equip}">
+					<th:block th:if="${user}">
+						<ul class="d-flex flex-row list-unstyled justify-content-end" th:object="${user}">
+							<li class="mr-3">社員番号：<span
+								th:text="*{employeeNumber}"></span></li>
+							<li>使用者名：<span
+								th:text="*{name}"></span></li>
+						</ul>
+					</th:block>
+					<form th:action="@{{id}/update(id=${equip.id})}" name="equip"
+						method="post" th:object="${equip}">
 						<div class="form-label-group">
 							<label for="asset">資産番号</label> <input type="text" id="asset"
 								name="asset" class="form-control" th:value="*{asset}">
@@ -53,7 +63,8 @@
 						</div>
 						<div class="form-label-group">
 							<label for="storageLocation">保管場所</label> <input type="text"
-								id="storageLocation" name="storageLocation" class="form-control" th:value="*{storageLocation}">
+								id="storageLocation" name="storageLocation" class="form-control"
+								th:value="*{storageLocation}">
 						</div>
 						<div class="form-label-group">
 							<label for="leaseStart">リース開始日</label> <input type="date"
