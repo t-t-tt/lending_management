@@ -13,7 +13,7 @@ import taro.form.EquipForm;
 import taro.repository.EquipRepository;
 
 /**
- * イベント参加者のService実装クラスです.
+ * 機器Service実装クラスです.
  */
 @Service
 public class EquipServiceImpl implements EquipService {
@@ -21,26 +21,26 @@ public class EquipServiceImpl implements EquipService {
 	EquipRepository equipRepository;
 
 	/**
-	 * 指定したIDに紐づくユーザーを取得します.
+	 * 指定したIDに紐づく機器を取得します.
 	 * @param id id
-	 * @return ユーザー
+	 * @return 機器
 	 */
 	public EquipEntity findOneById(Integer id) {
 		return equipRepository.findOneById(id);
 	}
 
 	/**
-	 * 未削除ユーザー一覧を取得.
+	 * 未削除機器一覧を取得.
 	 * @param
-	 * @return ユーザー一覧（未削除）
+	 * @return 機器一覧（未削除）
 	 */
 	public List<EquipEntity> findByIsDeletedFalse() {
 		return equipRepository.findByIsDeletedFalse();
 	}
 
 	/**
-	 * ユーザー情報をDBに登録します.
-	 * @param EquipForm ユーザー情報
+	 * 機器情報をDBに登録します.
+	 * @param EquipForm 機器情報
 	 */
 	public void save(EquipForm equipForm) {
 		// EquipForm内の情報をEquipEntityクラスに詰め替え
@@ -68,9 +68,9 @@ public class EquipServiceImpl implements EquipService {
 	}
 
 	/**
-	 * ユーザー情報をDBに登録します.
-	 * @param EquipForm ユーザー情報
-	 * @param id ユーザーID
+	 * 機器情報をDBに登録します.
+	 * @param EquipForm 機器情報
+	 * @param id 機器ID
 	 */
 	@Transactional
 	public void save(Integer id, EquipForm equipForm) {
@@ -97,7 +97,7 @@ public class EquipServiceImpl implements EquipService {
 
 	/**
 	 * 指定したIDに紐づくレコードのis_deletedをfalseに書き換え.
-	 * @param id ユーザーID
+	 * @param id 機器ID
 	 */
 	@Transactional
 	public void deleteById(Integer id) {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import taro.entity.EquipEntity;
 import taro.form.EquipForm;
 import taro.service.EquipService;
+import taro.service.LendService;
 
 /**
  * 機器コントローラクラスです.
@@ -24,6 +25,9 @@ public class EquipController {
 
 	@Autowired
 	EquipService equipService;
+
+	@Autowired
+	LendService lendService;
 
 	@GetMapping("/equip")
 	public String index(Model model) {
@@ -126,9 +130,11 @@ public class EquipController {
 	 * 機器情報の削除処理
 	 * @param model
 	 * @return 機器一覧画面のパス
+	 * @throws Exception
 	 */
 	@GetMapping("/equip/{id}/delete")
-	public String equipDelete(@PathVariable("id") Integer id) {
+	public String equipDelete(@PathVariable("id") Integer id) throws Exception {
+		if(lendService.findOneByEquipId(id)!= null) throw new Exception("現在貸出中の機器です。");
 		equipService.deleteById(id);
 		// 次に表示する画面のパス（htmlファイルの名称）を返却
 		return "redirect:/equip/list";

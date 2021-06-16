@@ -15,7 +15,14 @@ public interface LendRepository extends JpaRepository<LendEntity, Integer> {
 	 * @param 機器ID equipId
 	 * @return 機器
 	 */
-	public LendEntity findOneByEquipId(Integer EquipId);
+	public LendEntity findOneByEquipId(Integer equipId);
+
+	/**
+	 * 指定したUserIDに紐づく機器を取得します.
+	 * @param ユーザーID equipId
+	 * @return ユーザー
+	 */
+	public List<LendEntity> findByUserId(Integer userId);
 
 	/**
 	 * 未削除機器一覧を取得.

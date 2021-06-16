@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import taro.entity.UserEntity;
 import taro.form.UserForm;
+import taro.service.LendService;
 import taro.service.UserService;
 
 /**
@@ -24,6 +25,9 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	LendService lendService;
 
 	@GetMapping("/")
 	public String index(Model model) {
@@ -118,9 +122,11 @@ public class UserController {
 	 * ユーザー情報の削除処理
 	 * @param model
 	 * @return ユーザー一覧画面のパス
+	 * @throws Exception
 	 */
 	@GetMapping("/user/{id}/delete")
-	public String userDelete(@PathVariable("id") Integer id) {
+	public String userDelete(@PathVariable("id") Integer id) throws Exception {
+		if(lendService.findByUserId(id).size() > 0) throw new Exception("現在貸出中の機器が存在します");
 		userService.deleteById(id);
 		// 次に表示する画面のパス（htmlファイルの名称）を返却
 		return "redirect:/user/list";

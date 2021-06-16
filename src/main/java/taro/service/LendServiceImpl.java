@@ -31,6 +31,22 @@ public class LendServiceImpl implements LendService {
 	UserRepository userRepository;
 
 	/**
+	 * ユーザーID
+	 * @param userId ユーザーID
+	 */
+	public List<LendEntity> findByUserId(Integer userId) {
+		return lendRepository.findByUserId(userId);
+	}
+
+	/**
+	 * 機器ID
+	 * @param userId 機器ID
+	 */
+	public LendEntity 	findOneByEquipId(Integer equipId) {
+		return lendRepository.findOneByEquipId(equipId);
+	}
+
+	/**
 	 * 未削除貸出一覧を取得.
 	 * @param
 	 * @return 貸出一覧（未削除）

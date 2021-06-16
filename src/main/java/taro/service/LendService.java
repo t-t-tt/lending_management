@@ -2,6 +2,7 @@ package taro.service;
 
 import java.util.List;
 
+import taro.entity.LendEntity;
 import taro.entity.LendingManagement;
 import taro.form.LendForm;
 
@@ -11,10 +12,17 @@ import taro.form.LendForm;
 public interface LendService {
 	/**
 	 * 指定したIDに紐づく貸出を取得します.
-	 * @param id id
+	 * @param userId ユーザーID
+	 * @return 貸出リスト
+	 */
+	public List<LendEntity> findByUserId(Integer usesrId);
+
+	/**
+	 * 指定したIDに紐づく貸出を取得します.
+	 * @param equipId 機器Id
 	 * @return 貸出
 	 */
-//	public LendEntity findOneById(Integer id);
+	public LendEntity findOneByEquipId(Integer equipId);
 
 	/**
 	 * 未削除貸出一覧を取得.
