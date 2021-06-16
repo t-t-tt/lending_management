@@ -25,7 +25,7 @@
 						</ul>
 					</div>
 
-					<p>貸出期限の過ぎたPC一覧</p>
+					<p class="text-danger">貸出期限の過ぎたPC一覧</p>
 					<table class="table table-striped">
 						<!-- lend（lendListクラス）のgetNameメソッドを実行して名前を画面に表示 -->
 						<tr>
@@ -43,7 +43,13 @@
 							<th>備考</th>
 						</tr>
 						<tr th:each="lm : ${expiredList}">
-							<td th:text="${lm.count}"></td>
+							<th:block th:if="${lm.lend}">
+								<td><a th:href="@{/lend/{id}(id=${lm.lend.id})}"
+									th:text="${lm.count}"></a></td>
+							</th:block>
+							<th:block th:unless="${lm.lend}">
+								<td th:text="${lm.count}"></td>
+							</th:block>
 							<td th:text="${lm.equip.asset}"></td>
 							<td th:text="${lm.equip.maker}"></td>
 							<td th:text="${lm.equip.os}"></td>
@@ -52,8 +58,10 @@
 							<td th:text="${lm.equip.isLent ? '貸出中' : '○'}"></td>
 							<td th:text="${lm.user != null ? lm.user.employeeNumber : ''}"></td>
 							<td th:text="${lm.user != null ? lm.user.name : ''}"></td>
-							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendStart,'yyyy-MM-dd') : ''}"></td>
-							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendEnd,'yyyy-MM-dd') : ''}"></td>
+							<td
+								th:text="${lm.lend != null ? #dates.format(lm.lend.lendStart,'yyyy-MM-dd') : ''}"></td>
+							<td
+								th:text="${lm.lend != null ? #dates.format(lm.lend.lendEnd,'yyyy-MM-dd') : ''}"></td>
 							<td th:text="${lm.equip.inventoryDate}"></td>
 							<td th:text="${lm.lend != null ? lm.lend.remarks : ''}"></td>
 						</tr>
@@ -78,7 +86,13 @@
 							<th>備考</th>
 						</tr>
 						<tr th:each="lm : ${lendingManagementList}">
-							<td th:text="${lm.count}"></td>
+							<th:block th:if="${lm.lend}">
+								<td><a th:href="@{/lend/{id}(id=${lm.lend.id})}"
+									th:text="${lm.count}"></a></td>
+							</th:block>
+							<th:block th:unless="${lm.lend}">
+								<td th:text="${lm.count}"></td>
+							</th:block>
 							<td th:text="${lm.equip.asset}"></td>
 							<td th:text="${lm.equip.maker}"></td>
 							<td th:text="${lm.equip.os}"></td>
@@ -87,8 +101,10 @@
 							<td th:text="${lm.equip.isLent ? '貸出中' : '○'}"></td>
 							<td th:text="${lm.user != null ? lm.user.employeeNumber : ''}"></td>
 							<td th:text="${lm.user != null ? lm.user.name : ''}"></td>
-							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendStart,'yyyy-MM-dd') : ''}"></td>
-							<td th:text="${lm.lend != null ? #dates.format(lm.lend.lendEnd,'yyyy-MM-dd') : ''}"></td>
+							<td
+								th:text="${lm.lend != null ? #dates.format(lm.lend.lendStart,'yyyy-MM-dd') : ''}"></td>
+							<td
+								th:text="${lm.lend != null ? #dates.format(lm.lend.lendEnd,'yyyy-MM-dd') : ''}"></td>
 							<td th:text="${lm.equip.inventoryDate}"></td>
 							<td th:text="${lm.lend != null ? lm.lend.remarks : ''}"></td>
 						</tr>

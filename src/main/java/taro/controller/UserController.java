@@ -29,10 +29,10 @@ public class UserController {
 	@Autowired
 	LendService lendService;
 
-	@GetMapping("/")
-	public String index(Model model) {
+	@GetMapping("/user")
+	public String userToUserList(Model model) {
 		// 次に表示する画面のパスを返却
-		return "redirect:/user/regist";
+		return "redirect:/user/list";
 	}
 
 	/**

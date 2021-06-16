@@ -7,49 +7,47 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
 	integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
 	crossorigin="anonymous">
-<title>貸出返却</title>
+<title>貸出情報編集</title>
 </head>
 <body>
 	<div class="login align-items-center py-5">
 		<div class="d-flex flex-row">
 			<div th:insert="~{common :: side_bar}" class="col-2"></div>
 			<div class="row col-10">
-				<div class="col-md-9 col-lg-8 mx-auto">
-					<h3 class="col-md-9 col-lg-8">貸出返却</h3>
+				<div class="col-md-9 col-lg-8 mx-auto" th:object="${lend}">
+					<h3 class="col-md-9 col-lg-8">貸出情報編集</h3>
 					<form>
 						<div class="form-label-group">
-							<label for="equipId">資産番号</label> <select id="equipId" name="equipId"
-								class="form-control">
-								<option th:each="equip : ${equipList}" th:text="${equip.asset}"
-									th:value="${equip.id}"></option>
+							<label for="equipId">資産番号</label> <select id="equipId"
+								name="equipId" class="form-control" th:readonly="true">
+								<option th:text="${asset}" th:value="*{equipId}"></option>
 							</select>
 						</div>
 						<div class="form-label-group">
-							<label for="userId">社員番号</label> <select id="userId" name="userId"
-								class="form-control">
-								<option th:each="user : ${userList}" th:text="${user.employeeNumber}"
-									th:value="${user.id}"></option>
+							<label for="userId">社員番号</label><select id="userId" name="userId"
+								class="form-control" th:readonly="true">
+								<option th:text="${employeeNumber}" th:value="*{userId}"></option>
 							</select>
 						</div>
 						<div class="form-label-group">
 							<label for="lendStart">貸出日</label> <input type="date"
 								id="lendStart" name="lendStart" class="form-control"
-								th:value="${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+								th:value="${#dates.format(lend.lendStart,'yyyy-MM-dd')}">
 						</div>
 						<div class="form-label-group">
-							<label for="lendEnd">返却日</label> <input type="date"
-								id="lendEnd" name="lendEnd" class="form-control"
-								th:value="${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+							<label for="lendEnd">返却日</label> <input type="date" id="lendEnd"
+								name="lendEnd" class="form-control"
+								th:value="${#dates.format(lend.lendEnd,'yyyy-MM-dd')}">
 						</div>
 						<div class="form-label-group">
 							<label for="remarks">備考</label> <input type="text" id="remarks"
-								name="remarks" class="form-control">
+								name="remarks" class="form-control" th:value="*{remarks}">
 						</div>
 						<br>
 						<button
 							class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-							type="submit" th:formaction="@{rent}" name="lend"
-							formmethod="post">貸出</button>
+							type="submit" th:formaction="@{edit}" name="lend"
+							formmethod="post">保存</button>
 						<button
 							class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
 							type="submit" th:formaction="@{dropoff}" name="lend"

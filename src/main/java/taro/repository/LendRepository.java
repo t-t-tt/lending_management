@@ -11,23 +11,29 @@ import taro.entity.LendEntity;
  */
 public interface LendRepository extends JpaRepository<LendEntity, Integer> {
 	/**
-	 * 指定したEquipIDに紐づく機器を取得します.
+	 * 指定したIDに紐づく貸出情報を取得します.
+	 * @param 貸出ID Id
+	 * @return 貸出情報
+	 */
+	public LendEntity findOneById(Integer id);
+	/**
+	 * 指定したEquipIDに紐づく貸出情報を取得します.
 	 * @param 機器ID equipId
-	 * @return 機器
+	 * @return 貸出情報
 	 */
 	public LendEntity findOneByEquipId(Integer equipId);
 
 	/**
-	 * 指定したUserIDに紐づく機器を取得します.
+	 * 指定したUserIDに紐づく貸出情報を取得します.
 	 * @param ユーザーID equipId
-	 * @return ユーザー
+	 * @return 貸出情報リスト
 	 */
 	public List<LendEntity> findByUserId(Integer userId);
 
 	/**
-	 * 未削除機器一覧を取得.
+	 * 未削除貸出情報一覧を取得.
 	 * @param
-	 * @return 機器一覧（未削除）
+	 * @return 貸出情報一覧（未削除）
 	 */
 	public List<LendEntity> findAll();
 
