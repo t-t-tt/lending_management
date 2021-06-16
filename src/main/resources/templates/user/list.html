@@ -44,7 +44,7 @@
 							<th>更新日</th>
 							<th>退職日</th>
 						</tr>
-						<tr th:each="user : ${userList}">
+						<tr th:each="user : ${userList}" th:classappend="${user.retirementDate != null ? 'bg-danger' : ''}">
 							<td><a
 								th:href="@{/user/{id}(id=${user.id})}"
 								th:text="${user.employeeNumber}"></a></td>

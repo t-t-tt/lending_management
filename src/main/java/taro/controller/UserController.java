@@ -124,7 +124,7 @@ public class UserController {
 	 * @return ユーザー一覧画面のパス
 	 * @throws Exception
 	 */
-	@GetMapping("/user/{id}/delete")
+	@PostMapping("/user/{id}/delete")
 	public String userDelete(@PathVariable("id") Integer id) throws Exception {
 		if(lendService.findByUserId(id).size() > 0) throw new Exception("現在貸出中の機器が存在します");
 		userService.deleteById(id);

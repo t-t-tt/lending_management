@@ -21,7 +21,11 @@ public interface LendRepository extends JpaRepository<LendEntity, Integer> {
 	 * @param 機器ID equipId
 	 * @return 貸出情報
 	 */
-	public LendEntity findOneByEquipId(Integer equipId);
+	public LendEntity findByEquipId(Integer equipId);
+
+	public LendEntity findOneByEquipIdAndIsDeletedFalse(Integer equipId);
+
+	public List<LendEntity> findByUserIdAndIsDeletedFalse(Integer usesrId);
 
 	/**
 	 * 指定したUserIDに紐づく貸出情報を取得します.
@@ -37,5 +41,8 @@ public interface LendRepository extends JpaRepository<LendEntity, Integer> {
 	 */
 	public List<LendEntity> findAll();
 
+	public List<LendEntity> findByIsDeletedFalse();
+
 	public void deleteByEquipId(Integer equipId);
+	public List<LendEntity> findByEquipIdAndIsDeletedTrue(Integer equipId);
 }

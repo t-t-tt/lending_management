@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import taro.entity.EquipEntity;
 import taro.entity.LendEntity;
+import taro.entity.LendHistory;
 import taro.entity.LendingManagement;
 import taro.entity.UserEntity;
 import taro.form.LendForm;
@@ -38,6 +39,14 @@ public class LendServiceImpl implements LendService {
 		return lendRepository.findOneById(id);
 	}
 
+	public LendEntity findOneByEquipIdAndIsDeletedFalse(Integer equipId) {
+		return lendRepository.findOneByEquipIdAndIsDeletedFalse(equipId);
+	}
+
+	public List<LendEntity> findByUserIdAndIsDeletedFalse(Integer usesrId) {
+		return lendRepository.findByUserIdAndIsDeletedFalse(usesrId);
+	}
+
 	/**
 	 * ユーザーID
 	 * @param userId ユーザーID
@@ -50,8 +59,8 @@ public class LendServiceImpl implements LendService {
 	 * 機器ID
 	 * @param userId 機器ID
 	 */
-	public LendEntity findOneByEquipId(Integer equipId) {
-		return lendRepository.findOneByEquipId(equipId);
+	public LendEntity findByEquipId(Integer equipId) {
+		return lendRepository.findByEquipId(equipId);
 	}
 
 	/**
@@ -60,7 +69,7 @@ public class LendServiceImpl implements LendService {
 	 * @return 貸出一覧（未削除）
 	 */
 	@Transactional
-	public List<LendingManagement> findAll() {
+	public List<LendingManagement> getLendingManagementList() {
 		List<EquipEntity> equipList = equipRepository.findByIsDeletedFalse();
 		List<LendingManagement> lendManagementList = new ArrayList<LendingManagement>();
 		Integer count = 1;
@@ -69,11 +78,10 @@ public class LendServiceImpl implements LendService {
 			lendingManagement.setEquip(equip);
 			lendingManagement.setCount(count++);
 			if (equip.getIsLent()) {
-				LendEntity lend = lendRepository.findOneByEquipId(equip.getId());
+				LendEntity lend = lendRepository.findOneByEquipIdAndIsDeletedFalse(equip.getId());
 				UserEntity user = userRepository.findOneById(lend.getUserId());
 				lendingManagement.setUser(user);
 				lendingManagement.setLend(lend);
-				;
 			}
 			lendManagementList.add(lendingManagement);
 		}
@@ -93,7 +101,7 @@ public class LendServiceImpl implements LendService {
 		System.out.println(equip);
 		//機器レコードがnull or 貸出中
 		if (equip == null)
-			throw new Exception("機器データが存在しません");
+			throw new Exception("機器データが取得できませんでした。");
 		else if (!equip.getIsLent())
 			throw new Exception("貸出されていない機器です。");
 		else {
@@ -103,10 +111,13 @@ public class LendServiceImpl implements LendService {
 
 			//ユーザーレコードがnull
 			if (user == null)
-				throw new Exception("ユーザーデータが存在しません。");
+				throw new Exception("ユーザーデータが取得できませんでした。");
 			else {
 				//貸出レコードに追加
-				LendEntity lend = lendRepository.findOneByEquipId(lendForm.getEquipId());
+				LendEntity lend = lendRepository.findOneByEquipIdAndIsDeletedFalse(lendForm.getEquipId());
+				if (lend == null)
+					throw new Exception("貸出データが取得できませんでした。");
+				lend.setIsDeleted(false);
 				lend.setLendStart(Date.valueOf(lendForm.getLendStart()));
 				lend.setLendEnd(Date.valueOf(lendForm.getLendEnd()));
 				lend.setRemarks(lendForm.getRemarks());
@@ -131,7 +142,7 @@ public class LendServiceImpl implements LendService {
 		System.out.println(equip);
 		//機器レコードがnull or 貸出中
 		if (equip == null)
-			throw new Exception("機器データが存在しません");
+			throw new Exception("機器データが取得できませんでした。");
 		else if (equip.getIsLent())
 			throw new Exception("現在貸出中です");
 		else {
@@ -141,7 +152,7 @@ public class LendServiceImpl implements LendService {
 
 			//ユーザーレコードがnull
 			if (user == null)
-				throw new Exception("ユーザーデータが存在しません。");
+				throw new Exception("ユーザーデータが取得できませんでした。");
 			else {
 				//機器レコード書き換え
 				equip.setIsLent(true);
@@ -151,6 +162,7 @@ public class LendServiceImpl implements LendService {
 				LendEntity lend = new LendEntity();
 				lend.setEquipId(lendForm.getEquipId());
 				lend.setUserId(lendForm.getUserId());
+				lend.setIsDeleted(false);
 				lend.setLendStart(Date.valueOf(lendForm.getLendStart()));
 				lend.setLendEnd(Date.valueOf(lendForm.getLendEnd()));
 				lend.setRemarks(lendForm.getRemarks());
@@ -177,21 +189,40 @@ public class LendServiceImpl implements LendService {
 
 		//機器レコードがnull or 貸し出されていない
 		if (equip == null)
-			throw new Exception("機器レコードが存在しません");
+			throw new Exception("機器データが取得できませんでした。");
 		else if (!equip.getIsLent())
 			throw new Exception("現在貸出されておりません");
 		else {
 			UserEntity user = userRepository.findOneById(lendForm.getUserId());
 			//機器レコードがnull
 			if (user == null)
-				throw new Exception("ユーザーデータが存在しません。");
+				throw new Exception("ユーザーデータが取得できませんでした。");
 			else {
-				LendEntity lend = lendRepository.findOneByEquipId(equip.getId());
+				LendEntity lend = lendRepository.findOneByEquipIdAndIsDeletedFalse(equip.getId());
+				if (lend == null)
+					throw new Exception("貸出データが取得できませんでした。");
+				lend.setIsDeleted(true);
 				equip.setIsLent(false);
 				equipRepository.save(equip);
-				lendRepository.deleteById(lend.getId());
+				lendRepository.save(lend);
 			}
 		}
 
+	}
+
+	public List<LendHistory> getLendHistory(Integer equipId) {
+		List<LendEntity> lendList = lendRepository.findByEquipIdAndIsDeletedTrue(equipId);
+
+		List<LendHistory> lendHistoryList = new ArrayList<LendHistory>();
+		for (LendEntity lend : lendList) {
+			LendHistory lendHistory = new LendHistory();
+			UserEntity user = userRepository.findOneById(lend.getUserId());
+			if (user != null) {
+				lendHistory.setUser(user);
+				lendHistory.setLend(lend);
+				lendHistoryList.add(lendHistory);
+			}
+		}
+		return lendHistoryList;
 	}
 }

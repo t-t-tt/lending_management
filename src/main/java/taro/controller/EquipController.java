@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import taro.entity.EquipEntity;
 import taro.entity.LendEntity;
+import taro.entity.LendHistory;
 import taro.entity.UserEntity;
 import taro.form.EquipForm;
 import taro.service.EquipService;
@@ -78,10 +79,12 @@ public class EquipController {
 		// DBに登録されている機器の一覧を取得
 		EquipEntity equip = equipService.findOneById(id);
 
+		List<LendHistory> lendHistoryList = lendService.getLendHistory(id);
+
 		if(equip == null) throw new Exception("機器データが取得できませんでした。");
 
 		if(equip.getIsLent()) {
-			LendEntity lend = lendService.findOneByEquipId(id);
+			LendEntity lend = lendService.findOneByEquipIdAndIsDeletedFalse(id);
 			if(lend == null) throw new Exception("貸出データが取得できませんでした。");
 			else {
 				UserEntity user = userService.findOneById(lend.getUserId());
@@ -94,6 +97,8 @@ public class EquipController {
 
 		// modelにイベントの一覧をセット
 		model.addAttribute("equip", equip);
+
+		if(lendHistoryList.size() > 0) model.addAttribute("lendHistoryList", lendHistoryList);
 
 		// 次に表示する画面のパスを返却
 		return "equip/detail";
@@ -154,9 +159,9 @@ public class EquipController {
 	 * @return 機器一覧画面のパス
 	 * @throws Exception
 	 */
-	@GetMapping("/equip/{id}/delete")
+	@PostMapping("/equip/{id}/delete")
 	public String equipDelete(@PathVariable("id") Integer id) throws Exception {
-		if (lendService.findOneByEquipId(id) != null)
+		if (lendService.findOneByEquipIdAndIsDeletedFalse(id) != null)
 			throw new Exception("現在貸出中の機器です。");
 		equipService.deleteById(id);
 		// 次に表示する画面のパス（htmlファイルの名称）を返却

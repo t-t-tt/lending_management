@@ -58,7 +58,7 @@ public class LendController {
 	@GetMapping("/lend/list")
 	public String lendList(Model model) {
 		// DBに登録されている貸出の一覧を取得
-		List<LendingManagement> lendingManagementList = lendService.findAll();
+		List<LendingManagement> lendingManagementList = lendService.getLendingManagementList();
 		List<LendingManagement> expiredList = new ArrayList<LendingManagement>();
 
 		int letedPcNum = 0;

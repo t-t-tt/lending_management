@@ -87,6 +87,10 @@ public class UserServiceImpl implements UserService {
 		user.setPrivilege(userForm.getPrivilege());
 		if (userForm.getRetirementDate() != null && userForm.getRetirementDate() != "")
 			user.setRetirementDate(Date.valueOf(userForm.getRetirementDate()));
+		else {
+			Date tmpDate = null;
+			user.setRetirementDate(tmpDate);
+		}
 		user.setTelNumber(userForm.getTelNumber());
 		user.setUpdateDate(new Date(System.currentTimeMillis()));
 
