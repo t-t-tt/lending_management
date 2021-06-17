@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * イベント参加情報のFormクラスです
+ * ユーザー情報のFormクラスです
  */
 @Data
 public class UserForm {

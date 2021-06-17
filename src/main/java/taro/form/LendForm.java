@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * イベント情報のFormクラスです
+ * 貸出情報のFormクラスです
  */
 @Data
 public class LendForm {

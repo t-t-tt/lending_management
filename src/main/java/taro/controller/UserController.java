@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import taro.entity.UserEntity;
 import taro.form.UserForm;
@@ -29,8 +30,11 @@ public class UserController {
 	@Autowired
 	LendService lendService;
 
+	/**
+	 * @return
+	 */
 	@GetMapping("/user")
-	public String userToUserList(Model model) {
+	public String userToUserList() {
 		// 次に表示する画面のパスを返却
 		return "redirect:/user/list";
 	}
@@ -39,6 +43,11 @@ public class UserController {
 	 * ユーザー一覧を表示します.
 	 * @param model
 	 * @return ユーザー一覧画面のパス
+	 */
+	/**
+	 * ユーザー一覧画面表示
+	 * @param model
+	 * @return
 	 */
 	@GetMapping("/user/list")
 	public String userList(Model model) {
@@ -70,9 +79,8 @@ public class UserController {
 	}
 
 	/**
-	 * ユーザー登録画面を表示します.
-	 * @param model
-	 * @return ユーザー一覧画面のパス
+	 * ユーザー登録画面を表示
+	 * @return
 	 */
 	@GetMapping("/user/regist")
 	public String userRegist() {
@@ -81,9 +89,10 @@ public class UserController {
 	}
 
 	/**
-	 * ユーザー情報の登録処理.
-	 * @param model
-	 * @return ユーザー一覧画面のパス
+	 * ユーザー情報の登録処理
+	 * @param userForm
+	 * @param bindingResult
+	 * @return
 	 */
 	@PostMapping("/user/add")
 	public String userAdd(@Validated @ModelAttribute("user") UserForm userForm, BindingResult bindingResult) {
@@ -100,12 +109,15 @@ public class UserController {
 
 	/**
 	 * ユーザー情報の更新処理
-	 * @param model
-	 * @return ユーザー一覧画面のパス
+	 * @param id
+	 * @param userForm
+	 * @param bindingResult
+	 * @return
+	 * @throws Exception
 	 */
 	@PostMapping("/user/{id}/update")
 	public String userUpdate(@PathVariable("id") Integer id, @Validated @ModelAttribute("user") UserForm userForm,
-			BindingResult bindingResult) {
+			BindingResult bindingResult) throws Exception {
 		if (bindingResult.hasErrors()) {
 			System.out.println(userForm);
 			return "error.html";
@@ -120,15 +132,34 @@ public class UserController {
 
 	/**
 	 * ユーザー情報の削除処理
-	 * @param model
-	 * @return ユーザー一覧画面のパス
+	 * @param id
+	 * @return
 	 * @throws Exception
 	 */
 	@PostMapping("/user/{id}/delete")
 	public String userDelete(@PathVariable("id") Integer id) throws Exception {
-		if(lendService.findByUserId(id).size() > 0) throw new Exception("現在貸出中の機器が存在します");
+		if (lendService.findByUserId(id).size() > 0)
+			throw new Exception("現在貸出中の機器が存在します");
 		userService.deleteById(id);
 		// 次に表示する画面のパス（htmlファイルの名称）を返却
 		return "redirect:/user/list";
+	}
+
+	/**
+	 * ユーザー情報の検索
+	 * @param id
+	 * @return ユーザー一覧画面のパス
+	 * @throws Exception
+	 */
+	@GetMapping("/user/search")
+	public String userSearch(@RequestParam("searchText") String searchText, Model model) throws Exception {
+		List<UserEntity> userList = userService.findByNameContainingAndIsDeletedFalse(searchText);
+
+		// modelに機器の一覧、貸出PC・空きPCの数をセット
+		model.addAttribute("userList", userList);
+		model.addAttribute("searchText", searchText);
+
+		// 次に表示する画面のパス（htmlファイルの名称）を返却
+		return "/user/searchResult";
 	}
 }

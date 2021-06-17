@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import taro.entity.EquipEntity;
 import taro.entity.LendEntity;
@@ -36,8 +37,12 @@ public class EquipController {
 	@Autowired
 	UserService userService;
 
+	/**
+	 * 機器一覧を表示します.
+	 * @return リダイレクト
+	 */
 	@GetMapping("/equip")
-	public String index(Model model) {
+	public String index() {
 		// 次に表示する画面のパスを返却
 		return "redirect:/equip/list";
 	}
@@ -59,19 +64,20 @@ public class EquipController {
 				letedPcNum++;
 		}
 
-		// modelにイベントの一覧をセット
+		// modelに機器の一覧、貸出PC・空きPCの数をセット
 		model.addAttribute("equipList", equipList);
 		model.addAttribute("lentedPcNum", letedPcNum);
 		model.addAttribute("notLentedPcNum", (equipList.size() - letedPcNum));
 
-		// 次に表示する画面のパスを返却
+		// 一覧画面のパスを返却
 		return "equip/list";
 	}
 
 	/**
 	 * 機器詳細を表示します.
+	 * @param id
 	 * @param model
-	 * @return 機器一覧画面のパス
+	 * @return 機器詳細画面のパス
 	 * @throws Exception
 	 */
 	@GetMapping("/equip/{id}")
@@ -95,18 +101,18 @@ public class EquipController {
 
 		System.out.println(equip);
 
-		// modelにイベントの一覧をセット
+		// modelに機器情報をセット
 		model.addAttribute("equip", equip);
 
+		// modelに貸出履歴をセット
 		if(lendHistoryList.size() > 0) model.addAttribute("lendHistoryList", lendHistoryList);
 
-		// 次に表示する画面のパスを返却
+		// 機器詳細画面のパスを返却
 		return "equip/detail";
 	}
 
 	/**
 	 * 機器登録画面を表示します.
-	 * @param model
 	 * @return 機器一覧画面のパス
 	 */
 	@GetMapping("/equip/regist")
@@ -117,7 +123,8 @@ public class EquipController {
 
 	/**
 	 * 機器情報の登録処理.
-	 * @param model
+	 * @param equipForm
+	 * @param bindingResult
 	 * @return 機器一覧画面のパス
 	 */
 	@PostMapping("/equip/add")
@@ -136,7 +143,9 @@ public class EquipController {
 
 	/**
 	 * 機器情報の更新処理
-	 * @param model
+	 * @param id
+	 * @param equipForm
+	 * @param bindingResult
 	 * @return 機器一覧画面のパス
 	 */
 	@PostMapping("/equip/{id}/update")
@@ -155,7 +164,7 @@ public class EquipController {
 
 	/**
 	 * 機器情報の削除処理
-	 * @param model
+	 * @param id
 	 * @return 機器一覧画面のパス
 	 * @throws Exception
 	 */
@@ -166,5 +175,32 @@ public class EquipController {
 		equipService.deleteById(id);
 		// 次に表示する画面のパス（htmlファイルの名称）を返却
 		return "redirect:/equip/list";
+	}
+
+	/**
+	 * 機器情報の検索
+	 * @param id
+	 * @return 機器一覧画面のパス
+	 * @throws Exception
+	 */
+	@GetMapping("/equip/search")
+	public String equipSearch( @RequestParam("searchText") String searchText, Model model) throws Exception {
+
+		List<EquipEntity> equipList = equipService.findByAssetContainingAndIsDeletedFalse(searchText);
+
+		int letedPcNum = 0;
+		for (EquipEntity equip : equipList) {
+			if (equip.getIsLent())
+				letedPcNum++;
+		}
+
+		// modelに機器の一覧、貸出PC・空きPCの数をセット
+		model.addAttribute("equipList", equipList);
+		model.addAttribute("lentedPcNum", letedPcNum);
+		model.addAttribute("notLentedPcNum", (equipList.size() - letedPcNum));
+		model.addAttribute("searchText", searchText);
+
+		// 次に表示する画面のパス（htmlファイルの名称）を返却
+		return "/equip/searchResult";
 	}
 }
