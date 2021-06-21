@@ -89,6 +89,31 @@ public class LendServiceImpl implements LendService {
 	}
 
 	/**
+	 * 未削除貸出一覧(貸出中のみ)を取得.
+	 * @param
+	 * @return 貸出一覧（未削除＆貸出中）
+	 */
+	@Transactional
+	public List<LendingManagement> getRentedLendingManagementList() {
+		List<EquipEntity> equipList = equipRepository.findByIsDeletedFalse();
+		List<LendingManagement> lendManagementList = new ArrayList<LendingManagement>();
+		Integer count = 1;
+		for (EquipEntity equip : equipList) {
+			LendingManagement lendingManagement = new LendingManagement();
+			if (equip.getIsLent()) {
+				lendingManagement.setEquip(equip);
+				lendingManagement.setCount(count++);
+				LendEntity lend = lendRepository.findOneByEquipIdAndIsDeletedFalse(equip.getId());
+				UserEntity user = userRepository.findOneById(lend.getUserId());
+				lendingManagement.setUser(user);
+				lendingManagement.setLend(lend);
+				lendManagementList.add(lendingManagement);
+			}
+		}
+		return lendManagementList;
+	}
+
+	/**
 	 * 機器レコード内を検索()
 	 * 貸出レコード内を検索、equipIdとuserIdが合致するレコードがあったら処理
 	 * @param LendForm 貸出情報

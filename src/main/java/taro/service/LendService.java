@@ -42,6 +42,17 @@ public interface LendService {
 	 */
 	public List<LendingManagement> getLendingManagementList();
 
+	/**
+	 * 未削除貸出一覧(貸出中のみ)を取得.
+	 * @param
+	 * @return 貸出一覧（未削除＆貸出中）
+	 */
+	public List<LendingManagement> getRentedLendingManagementList();
+
+	/**
+	 * @param equipId
+	 * @return 貸出履歴
+	 */
 	public List<LendHistory> getLendHistory(Integer equipId);
 
 	/**

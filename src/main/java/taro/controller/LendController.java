@@ -2,6 +2,7 @@ package taro.controller;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,11 +96,24 @@ public class LendController {
 	 */
 	@GetMapping("/lend/rent")
 	public String lendDetail(Model model) {
+
+		//貸出フォーム用
 		List<EquipEntity> equipList = equipService.findByIsDeletedFalseAndIsLentFalse();
 		List<UserEntity> userList = userService.findByIsDeletedFalseAndRetirementDateIsNull();
 
+		//返却フォーム用
+		List<LendingManagement> lendingManagementList = lendService.getRentedLendingManagementList();
+		HashMap<Integer, LendingManagement> lendingManagementMap = new HashMap<Integer, LendingManagement>();
+		for(LendingManagement lend : lendingManagementList) {
+			lendingManagementMap.put(lend.getEquip().getId(), lend);
+		}
+
+
+
 		model.addAttribute("equipList", equipList);
 		model.addAttribute("userList", userList);
+		model.addAttribute("lendingManagementList", lendingManagementList);
+		model.addAttribute("lendingManagementMap", lendingManagementMap);
 		// 次に表示する画面のパスを返却
 		return "lend/rent";
 	}
