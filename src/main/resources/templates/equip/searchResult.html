@@ -7,7 +7,7 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
 	integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
 	crossorigin="anonymous">
-<title>機器一覧</title>
+<title>機器検索結果</title>
 </head>
 <body>
 	<div class="login align-items-center py-5">
@@ -15,17 +15,11 @@
 			<div th:insert="~{common :: side_bar}" class="col-2"></div>
 			<div class="row col-10">
 				<div class="col-md-12 col-lg-12">
-					<h3 class="login-heading my-4">機器一覧</h3>
+					<h3 class="login-heading my-4">”<span th:text="${searchText}"></span>”の機器検索結果</h3>
 					<!-- Thymeleafの繰り返し処理 -->
 					<!-- modelにequipsというキーでセットされてきたリストを繰り返しで表示 -->
 					<!-- リスト（配列）のequipsから1ずつ要素を取得してequip（変数）に格納 -->
-					<div class="d-flex flex-row justify-content-between">
-						<form action="regist" method="get">
-							<button
-								class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-								type="submit">新規機器登録</button>
-						</form>
-
+					<div class="d-flex flex-row justify-content-end">
 						<ul>
 							<li>貸出PC：<span th:text=${lentedPcNum}></span>台</li>
 							<li>空きPC：<span th:text=${notLentedPcNum}></span>台</li>

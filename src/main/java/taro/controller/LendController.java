@@ -2,6 +2,7 @@ package taro.controller;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import taro.entity.EquipEntity;
+import taro.entity.LendEntity;
 import taro.entity.LendingManagement;
 import taro.entity.UserEntity;
 import taro.form.LendForm;
@@ -36,71 +39,144 @@ public class LendController {
 	@Autowired
 	UserService userService;
 
-	@GetMapping("/lend")
-	public String index(Model model) {
+	/**
+	 * @return リダイレクト 一覧画面
+	 */
+	@GetMapping("/")
+	public String indexToLendList() {
 		// 次に表示する画面のパスを返却
 		return "redirect:/lend/list";
 	}
 
 	/**
-	 * 貸出一覧を表示します.
 	 * @param model
-	 * @return 貸出一覧画面のパス
+	 * @return 貸出管理画面
+	 */
+	@GetMapping("/lend")
+	public String lendToLendList(Model model) {
+		// 次に表示する画面のパスを返却
+		return "redirect:/lend/list";
+	}
+
+	/**
+	 * @param model
+	 * @return 貸出管理画面のパス
 	 */
 	@GetMapping("/lend/list")
 	public String lendList(Model model) {
 		// DBに登録されている貸出の一覧を取得
-		List<LendingManagement> lendingManagementList = lendService.findAll();
+		List<LendingManagement> lendingManagementList = lendService.getLendingManagementList();
 		List<LendingManagement> expiredList = new ArrayList<LendingManagement>();
-		System.out.println(lendingManagementList.size()+"貸出一覧");
 
 		int letedPcNum = 0;
-		Date today = new Date(System.currentTimeMillis());
+		Date today = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+		for (LendingManagement lending : lendingManagementList) {
+			if (lending.getEquip().getIsLent())
+				letedPcNum++;
 
-		for (LendingManagement lending:lendingManagementList) {
-			if(lending.getEquip().getIsLent()) letedPcNum++;
-			if(lending.getLend() != null && lending.getLend().getLendEnd().before(today)) {
+			if (lending.getLend() != null && lending.getLend().getLendEnd().compareTo(today) < 0) {
 				expiredList.add(lending);
 			}
 		}
+		System.out.println("after for");
 
-		// modelにイベントの一覧をセット
 		model.addAttribute("lendingManagementList", lendingManagementList);
 		model.addAttribute("expiredList", expiredList);
 		model.addAttribute("lentedPcNum", letedPcNum);
 		model.addAttribute("notLentedPcNum", (lendingManagementList.size() - letedPcNum));
 
 		// 次に表示する画面のパスを返却
-		return "lend/list";
+		return "/lend/list";
 	}
 
 	/**
-	 * 貸出詳細を表示します.
+	 * 貸出返却画面を表示します.
 	 * @param model
-	 * @return 貸出詳細画面のパス
+	 * @return 貸出返却画面のパス
 	 */
-	@GetMapping("/lend/management")
+	@GetMapping("/lend/rent")
 	public String lendDetail(Model model) {
-		List<EquipEntity> equipList = equipService.findByIsDeletedFalse();
-		List<UserEntity> userList = userService.findByIsDeletedFalse();
+
+		//貸出フォーム用
+		List<EquipEntity> equipList = equipService.findByIsDeletedFalseAndIsLentFalse();
+		List<UserEntity> userList = userService.findByIsDeletedFalseAndRetirementDateIsNull();
+
+		//返却フォーム用
+		List<LendingManagement> lendingManagementList = lendService.getRentedLendingManagementList();
+		HashMap<Integer, LendingManagement> lendingManagementMap = new HashMap<Integer, LendingManagement>();
+		for(LendingManagement lend : lendingManagementList) {
+			lendingManagementMap.put(lend.getEquip().getId(), lend);
+		}
+
+
 
 		model.addAttribute("equipList", equipList);
 		model.addAttribute("userList", userList);
+		model.addAttribute("lendingManagementList", lendingManagementList);
+		model.addAttribute("lendingManagementMap", lendingManagementMap);
 		// 次に表示する画面のパスを返却
-		return "lend/management";
+		return "lend/rent";
 	}
 
 	/**
-	 * 貸出情報の貸出処理.
+	 * @param id
 	 * @param model
-	 * @return 貸出一覧画面のパス
+	 * @return 編集画面
+	 * @throws Exception
 	 */
-	@PostMapping("/lend/rent")
-	public String rentPc(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult) {
-		//		if(bindingResult.hasErrors()) {
-		//			System.out.println(lendForm);
-		//			return "redirect:/lend/regist";
-		//		}
+	@GetMapping("/lend/{id}")
+	public String lendDetail(@PathVariable("id") Integer id, Model model) throws Exception {
+		LendEntity lend = lendService.findOneById(id);
+		UserEntity user = userService.findOneById(lend.getUserId());
+		EquipEntity equip = equipService.findOneById(lend.getEquipId());
+
+		if (lend == null || user == null || equip == null)
+			throw new Exception("データが取得できませんでした。");
+
+		System.out.println(lend);
+		model.addAttribute("asset", equip.getAsset());
+		model.addAttribute("employeeNumber", user.getEmployeeNumber());
+		model.addAttribute("lend", lend);
+		// 次に表示する画面のパスを返却
+		return "lend/edit";
+	}
+
+	/**
+	 * 貸出情報編集処理
+	 * @param lendForm
+	 * @param bindingResult
+	 * @return
+	 * @throws Exception
+	 */
+	@PostMapping("/lend/edit")
+	public String editLend(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult)
+			throws Exception {
+		if (bindingResult.hasErrors()) {
+			System.out.println(lendForm);
+			return "redirect:/lend/list";
+		}
+		System.out.println(lendForm);
+		// DBに登録
+		lendService.editLend(lendForm);
+
+		// 次に表示する画面のパスを返却
+		return "redirect:/lend/list";
+	}
+
+	/**
+	 * 貸出情報の貸出処理
+	 * @param lendForm
+	 * @param bindingResult
+	 * @return
+	 * @throws Exception
+	 */
+	@PostMapping("/lend/add")
+	public String rentPc(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult)
+			throws Exception {
+		if (bindingResult.hasErrors()) {
+			System.out.println(lendForm);
+			return "redirect:/lend/rent";
+		}
 		System.out.println(lendForm);
 		// DBに登録
 		lendService.rentPc(lendForm);
@@ -110,20 +186,20 @@ public class LendController {
 	}
 
 	/**
-	 * 貸出情報の返却処理
-	 * @param model
-	 * @return 貸出一覧画面のパス
+	 * 返却処理
+	 * @param lendForm
+	 * @param bindingResult
+	 * @return
+	 * @throws Exception
 	 */
 	@PostMapping("/lend/dropoff")
-	public String dropOffPc(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult) {
-		//		if(bindingResult.hasErrors()) {
-		//			System.out.println(lendForm);
-		//			return "error.html";
-		//		}
-		// DBに登録
+	public String dropOffPc(@Validated @ModelAttribute("lend") LendForm lendForm, BindingResult bindingResult)
+			throws Exception {
+		if (bindingResult.hasErrors()) {
+			System.out.println(lendForm);
+			return "error.html";
+		}
 		lendService.dropOffPc(lendForm);
-
-		// 次に表示する画面のパス（htmlファイルの名称）を返却
 		return "redirect:/lend/list";
 	}
 }

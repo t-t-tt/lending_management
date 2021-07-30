@@ -38,6 +38,9 @@ public class LendEntity {
 	// 備考
 	@Column(name = "remarks")
 	private String remarks;
+	// 削除状態
+	@Column(name = "is_deleted")
+	private Boolean isDeleted;
 	// 登録日
 	@Column(name = "registration_date")
 	private Date registrationDate;

@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * イベント情報のFormクラスです
+ * 機器情報のFormクラスです
  */
 @Data
 public class EquipForm {

@@ -10,19 +10,41 @@ import taro.entity.LendEntity;
  * participantテーブルを操作するためのRepositoryクラスです
  */
 public interface LendRepository extends JpaRepository<LendEntity, Integer> {
-	/**
-	 * 指定したEquipIDに紐づく機器を取得します.
-	 * @param 機器ID equipId
-	 * @return 機器
-	 */
-	public LendEntity findOneByEquipId(Integer EquipId);
 
 	/**
-	 * 未削除機器一覧を取得.
-	 * @param
-	 * @return 機器一覧（未削除）
+	 * @param id
+	 * @return 貸出情報
 	 */
-	public List<LendEntity> findAll();
+	public LendEntity findOneById(Integer id);
 
-	public void deleteByEquipId(Integer equipId);
+	/**
+	 * @param equipId
+	 * @return 貸出情報
+	 */
+	public LendEntity findByEquipId(Integer equipId);
+
+	/**
+	 * @param equipId
+	 * @return 貸出一覧（未削除）
+	 */
+	public LendEntity findOneByEquipIdAndIsDeletedFalse(Integer equipId);
+
+	/**
+	 * @param usesrId
+	 * @return 貸出一覧（未削除）
+	 */
+	public List<LendEntity> findByUserIdAndIsDeletedFalse(Integer usesrId);
+
+	/**
+	 * @param userId
+	 * @return 貸出一覧
+	 */
+	public List<LendEntity> findByUserId(Integer userId);
+
+
+	/**
+	 * @param equipId
+	 * @return 貸出一覧（削除済み）
+	 */
+	public List<LendEntity> findByEquipIdAndIsDeletedTrue(Integer equipId);
 }

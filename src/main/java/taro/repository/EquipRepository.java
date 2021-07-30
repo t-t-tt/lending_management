@@ -7,13 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import taro.entity.EquipEntity;
 
 /**
- * participantテーブルを操作するためのRepositoryクラスです
+ * equipテーブルを操作するためのRepositoryクラスです
  */
 public interface EquipRepository extends JpaRepository<EquipEntity, Integer> {
+
 	/**
-	 * 指定したIDに紐づく機器を取得します.
-	 * @param id id
-	 * @return 機器
+	 * @param id
+	 * @return 機器情報
 	 */
 	public EquipEntity findOneById(Integer id);
 
@@ -25,9 +25,16 @@ public interface EquipRepository extends JpaRepository<EquipEntity, Integer> {
 	public List<EquipEntity> findByIsDeletedFalse();
 
 	/**
-	 * 指定した資産番号に紐づく機器を取得
+	 * 未削除かつ未貸出機器一覧を取得.
 	 * @param
-	 * @return 機器一覧（未削除）
+	 * @return 機器一覧
 	 */
-	public EquipEntity findOneByAsset(String asset);
+	public List<EquipEntity> findByIsDeletedFalseAndIsLentFalse();
+
+	/**
+	 * 資産番号部分一致検索（未削除）.
+	 * @param
+	 * @return 機器一覧
+	 */
+	public List<EquipEntity> findByAssetContainingAndIsDeletedFalse(String asset);
 }

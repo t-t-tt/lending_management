@@ -21,12 +21,11 @@
 							th:text="${#dates.format(user.registrationDate,'yyyy-MM-dd')}"></span></li>
 						<li>更新日：<span th:text=${#dates.format(user.updateDate,'yyyy-MM-dd')}></span></li>
 					</ul>
-					<form th:action="@{{id}/update(id=${user.id})}" name="user"
-						method="post" th:object="${user}">
+					<form th:object="${user}">
 						<div class="form-label-group">
 							<label for="employeeNumber">社員番号</label> <input type="text"
 								id="employeeNumber" name="employeeNumber" class="form-control"
-								th:value="*{employeeNumber}">
+								th:value="*{employeeNumber}" th:readonly="true">
 						</div>
 						<div class="form-label-group">
 							<label for="name">氏名</label> <input type="text" id="name"
@@ -91,10 +90,14 @@
 						</div>
 						<br>
 						<button
-							class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2 lg-4"
-							type="submit">保存</button>
+							class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+							type="submit" th:formaction="@{{id}/update(id=${user.id})}"
+							name="user" formmethod="post">保存</button>
+						<button
+							class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+							type="submit" th:formaction="@{{id}/delete(id=${user.id})}"
+							name="user" formmethod="post">削除</button>
 					</form>
-					<a th:href="@{{id}/delete(id=${user.id})}">削除</a>
 				</div>
 			</div>
 		</div>

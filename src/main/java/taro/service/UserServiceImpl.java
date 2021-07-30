@@ -8,8 +8,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import taro.entity.LendEntity;
 import taro.entity.UserEntity;
 import taro.form.UserForm;
+import taro.repository.LendRepository;
 import taro.repository.UserRepository;
 
 /**
@@ -19,6 +21,9 @@ import taro.repository.UserRepository;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	LendRepository lendRepository;
 
 	/**
 	 * 指定したIDに紐づくユーザーを取得します.
@@ -36,6 +41,24 @@ public class UserServiceImpl implements UserService {
 	 */
 	public List<UserEntity> findByIsDeletedFalse() {
 		return userRepository.findByIsDeletedFalse();
+	}
+
+	/**
+	 * 未削除かつ未退職ユーザー一覧を取得.
+	 * @param
+	 * @return ユーザー一覧
+	 */
+	public List<UserEntity> findByIsDeletedFalseAndRetirementDateIsNull() {
+		return userRepository.findByIsDeletedFalseAndRetirementDateIsNull();
+	}
+
+	/**
+	 * 社員名検索.
+	 * @param name
+	 * @return ユーザー一覧
+	 */
+	public List<UserEntity> findByNameContainingAndIsDeletedFalse(String name) {
+		return userRepository.findByNameContainingAndIsDeletedFalse(name);
 	}
 
 	/**
@@ -69,9 +92,10 @@ public class UserServiceImpl implements UserService {
 	 * ユーザー情報をDBに登録します.
 	 * @param UserForm ユーザー情報
 	 * @param id ユーザーID
+	 * @throws Exception
 	 */
 	@Transactional
-	public void save(Integer id, UserForm userForm) {
+	public void save(Integer id, UserForm userForm) throws Exception {
 		// UserForm内の情報をUserEntityクラスに詰め替え
 		UserEntity user = userRepository.findOneById(id);
 		System.out.println(user);
@@ -85,8 +109,18 @@ public class UserServiceImpl implements UserService {
 		user.setNameKana(userForm.getNameKana());
 		user.setPosition(userForm.getPosition());
 		user.setPrivilege(userForm.getPrivilege());
-		if (userForm.getRetirementDate() != null && userForm.getRetirementDate() != "")
+		if (userForm.getRetirementDate() != null && userForm.getRetirementDate() != "") {
+			List<LendEntity> lendList = lendRepository.findByUserIdAndIsDeletedFalse(id);
+			if(lendList.size() > 0) {
+				throw new Exception("貸出中の機器があるため退職日を登録できませんでした。機器の返却をお願いいたします。");
+			}
 			user.setRetirementDate(Date.valueOf(userForm.getRetirementDate()));
+
+		}
+		else {
+			Date tmpDate = null;
+			user.setRetirementDate(tmpDate);
+		}
 		user.setTelNumber(userForm.getTelNumber());
 		user.setUpdateDate(new Date(System.currentTimeMillis()));
 

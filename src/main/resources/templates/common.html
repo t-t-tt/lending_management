@@ -13,11 +13,31 @@
 
 	<div th:fragment="side_bar">
 		<ul class="d-flex flex-column text-left pt-4">
-			<li><a th:href="@{/lend/list}">貸出管理</a></li>
-			<li><a th:href="@{/lend/management}">貸出・返却</a></li>
+			<li><a th:href="@{/lend/list}">貸出管理画面</a></li>
+			<li><a th:href="@{/lend/rent}">貸出・返却</a></li>
 			<li><a th:href="@{/equip/list}">機器一覧</a></li>
 			<li><a th:href="@{/user/list}">ユーザー一覧</a></li>
 		</ul>
+
+		<br> <br>
+		<p class="d-block pl-2">機器検索</p>
+		<form th:action="@{/equip/search}" method="get" class="input-group">
+			<input type="text" id="searchText" name="searchText"
+				class="form-control" placeholder="資産番号を入力してください"> <span
+				class="input-group-btn">
+				<button type="submit" class="btn btn-default">検索</button>
+			</span>
+		</form>
+
+		<br> <br>
+		<p class="d-block pl-2">ユーザー検索</p>
+		<form th:action="@{/user/search}" method="get" class="input-group">
+			<input type="text" id="searchText" name="searchText"
+				class="form-control" placeholder="社員名を入力してください"> <span
+				class="input-group-btn">
+				<button type="submit" class="btn btn-default">検索</button>
+			</span>
+		</form>
 	</div>
 
 </body>

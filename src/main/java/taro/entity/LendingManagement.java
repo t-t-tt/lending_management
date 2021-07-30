@@ -3,7 +3,7 @@ package taro.entity;
 import lombok.Data;
 
 /**
- * participantテーブルのEntityクラスです
+ * 貸出管理画面表示用クラスです
  */
 @Data
 public class LendingManagement {

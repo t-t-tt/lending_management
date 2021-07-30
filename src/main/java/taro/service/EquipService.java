@@ -24,6 +24,20 @@ public interface EquipService {
 	public List<EquipEntity> findByIsDeletedFalse();
 
 	/**
+	 * 未削除かつ未貸出機器一覧を取得.
+	 * @param
+	 * @return 機器一覧
+	 */
+	public List<EquipEntity> findByIsDeletedFalseAndIsLentFalse();
+
+	/**
+	 * 資産番号部分一致検索（未削除）.
+	 * @param
+	 * @return 機器一覧
+	 */
+	public List<EquipEntity> findByAssetContainingAndIsDeletedFalse(String asset);
+
+	/**
 	 * 機器情報をDBに登録します.
 	 * @param EquipForm 機器情報
 	 */

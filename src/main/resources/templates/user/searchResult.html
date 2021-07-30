@@ -2,12 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<!-- 今回のサンプルで使用しているCSS（bootstrap）の読み込み -->
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
 	integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
 	crossorigin="anonymous">
-<title>ユーザー一覧</title>
+<title>ユーザー検索結果</title>
 </head>
 <body>
 	<div class="login align-items-center py-5">
@@ -15,20 +14,10 @@
 			<div th:insert="~{common :: side_bar}" class="col-2"></div>
 			<div class="row col-10">
 				<div class="col-md-12 col-lg-12">
-					<h3 class="login-heading my-4">ユーザー一覧</h3>
-					<!-- Thymeleafの繰り返し処理 -->
-					<!-- modelにusersというキーでセットされてきたリストを繰り返しで表示 -->
-					<!-- リスト（配列）のusersから1ずつ要素を取得してuser（変数）に格納 -->
-					<div class="d-flex flex-row-reverse">
-						<form action="regist" method="get">
-							<button
-								class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
-								type="submit">新規ユーザー登録</button>
-						</form>
-					</div>
-
+					<h3 class="login-heading my-4">
+						”<span th:text="${searchText}"></span>”のユーザー検索結果
+					</h3>
 					<table class="table table-striped table-bordered">
-						<!-- user（UserListクラス）のgetNameメソッドを実行して名前を画面に表示 -->
 						<tr>
 							<th>社員番号</th>
 							<th>氏名</th>
@@ -44,9 +33,9 @@
 							<th>更新日</th>
 							<th>退職日</th>
 						</tr>
-						<tr th:each="user : ${userList}" th:classappend="${user.retirementDate != null ? 'bg-danger' : ''}">
-							<td><a
-								th:href="@{/user/{id}(id=${user.id})}"
+						<tr th:each="user : ${userList}"
+							th:classappend="${user.retirementDate != null ? 'bg-danger' : ''}">
+							<td><a th:href="@{/user/{id}(id=${user.id})}"
 								th:text="${user.employeeNumber}"></a></td>
 							<td th:text="${user.name}"></td>
 							<td th:text="${user.nameKana}"></td>
@@ -57,7 +46,8 @@
 							<td th:text="${user.gender}"></td>
 							<td th:text="${user.position}"></td>
 							<td th:text="${user.privilege}"></td>
-							<td th:text="${#dates.format(user.registrationDate, 'yyyy/MM/dd')}"></td>
+							<td
+								th:text="${#dates.format(user.registrationDate, 'yyyy/MM/dd')}"></td>
 							<td th:text="${#dates.format(user.updateDate, 'yyyy/MM/dd')}"></td>
 							<td th:text="${#dates.format(user.retirementDate, 'yyyy/MM/dd')}"></td>
 						</tr>

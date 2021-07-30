@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- 今回のサンプルで使用しているCSS（bootstrap）の読み込み -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+	integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+	crossorigin="anonymous">
+<title>貸出・返却</title>
+</head>
+<body>
+	<div class="login align-items-center py-5">
+		<div class="d-flex flex-row">
+			<div th:insert="~{common :: side_bar}" class="col-2"></div>
+			<div class="row col-10">
+				<div class="col-md-9 col-lg-8 mx-auto">
+					<h3 class="col-md-9 col-lg-8">貸出・返却</h3>
+
+					<ul class="nav nav-tabs mb-3">
+						<li class="nav-item"><a href="#rent" class="nav-link active"
+							data-toggle="tab">貸出用フォーム</a></li>
+						<li class="nav-item"><a href="#drop-off" class="nav-link"
+							data-toggle="tab">返却用フォーム</a></li>
+					</ul>
+					<div class="container">
+
+						<div class="tab-content">
+							<div id="rent" class="tab-pane active">
+								<form name="rentForm">
+									<div class="form-label-group">
+										<label for="equipId">資産番号</label> <select id="equipId"
+											name="equipId" class="form-control">
+											<option th:each="equip : ${equipList}"
+												th:text="${equip.asset}" th:value="${equip.id}"></option>
+										</select>
+									</div>
+									<div class="form-label-group">
+										<label for="userId">社員番号 ： ユーザー名</label> <select id="userId"
+											name="userId" class="form-control">
+											<option th:each="user : ${userList}"
+												th:text="${user.employeeNumber+' ： '+user.name}"
+												th:value="${user.id}"></option>
+										</select>
+									</div>
+									<div class="form-label-group">
+										<label for="lendStart">貸出日</label> <input type="date"
+											id="lendStart" name="lendStart" class="form-control"
+											th:value="${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+									</div>
+									<div class="form-label-group">
+										<label for="lendEnd">返却日</label> <input type="date"
+											id="lendEnd" name="lendEnd" class="form-control"
+											th:value="${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+									</div>
+									<div class="form-label-group">
+										<label for="remarks">備考</label> <input type="text"
+											id="remarks" name="remarks" class="form-control">
+									</div>
+									<br>
+									<button
+										class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+										type="submit" th:formaction="@{add}" name="lend"
+										formmethod="post">貸出</button>
+								</form>
+
+							</div>
+							<div id="drop-off" class="tab-pane">
+								<form name="dropOffForm">
+									<div class="form-label-group">
+										<label for="equipId">資産番号</label> <select id="equipId"
+											name="equipId" class="form-control">
+											<option th:each="lm : ${lendingManagementList}"
+												th:text="${lm.equip.asset}" th:value="${lm.equip.id}"></option>
+										</select>
+									</div>
+									<div class="form-label-group">
+										<label for="userId">社員番号 ： ユーザー名</label> <select id="userId"
+											name="userId" class="form-control" th:readonly="true">
+											<!-- <option th:each="user : ${userList}"
+												th:text="${user.employeeNumber+' ： '+user.name}"
+												th:value="${user.id}"></option> -->
+										</select>
+									</div>
+									<div class="form-label-group">
+										<label for="lendStart">貸出日</label> <input type="date"
+											id="lendStart" name="lendStart" class="form-control"
+											th:readonly="true"
+											th:value="${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+									</div>
+									<div class="form-label-group">
+										<label for="lendEnd">返却日</label> <input type="date"
+											id="lendEnd" name="lendEnd" class="form-control"
+											th:readonly="true"
+											th:value="${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+									</div>
+									<div class="form-label-group">
+										<label for="remarks">備考</label> <input type="text"
+											id="remarks" name="remarks" class="form-control"
+											th:readonly="true">
+									</div>
+									<br>
+									<button
+										class="btn btn-lg btn-primary btn-block btn-login font-weight-bold mb-2"
+										type="submit" th:formaction="@{dropoff}" name="lend"
+										formmethod="post">返却</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script th:inline="javascript">
+/*<![CDATA[*/
+		//フォーム内の値更新用ここから
+	    const lmList = /*[[ ${lendingManagementList} ]]*/;
+	    const lmMap = /*[[ ${lendingManagementMap} ]]*/;
+	    const dropOffForm = document.forms.dropOffForm;
+	    const equipSelect = dropOffForm.elements['equipId'];
+	    const userSelect = dropOffForm.elements['userId'];
+	    const lendStart = dropOffForm.elements['lendStart'];
+	    const lendEnd = dropOffForm.elements['lendEnd'];
+	    const remarks = dropOffForm.elements['remarks'];
+
+	    console.log(lmMap);
+
+	    //初期値
+	    if(lmList.length > 0) {
+	    	while(userSelect.lastChild){
+	    		userSelect.removeChild(userSelect.lastChild);
+    		}
+	    	const option = document.createElement("option");
+	    	const user = lmList[0].user;
+	    	option.text = user.employeeNumber + " : " + user.name;
+	    	option.value = user.id;
+	    	userSelect.appendChild(option);
+	    	lendStart.value=lmList[0].lend.lendStart.slice(0,10);
+	    	lendEnd.value=lmList[0].lend.lendEnd.slice(0,10);
+	    	remarks.value=lmList[0].lend.remarks;
+	    }
+
+	    equipSelect.addEventListener("change", (e) => {
+	    	while(userSelect.lastChild){
+	    		userSelect.removeChild(userSelect.lastChild);
+    		}
+	    	const lm = lmMap[e.target.value];
+	    	const option = document.createElement("option");
+	    	const user = lm.user;
+	    	option.text = user.employeeNumber + " : " + user.name;
+	    	option.value = user.id;
+	    	userSelect.appendChild(option);
+	    	lendStart.value=lm.lend.lendStart.slice(0,10);
+	    	lendEnd.value=lm.lend.lendEnd.slice(0,10);
+	    	remarks.value=lm.lend.remarks;
+	    }, false);
+
+
+	  //フォーム内の値更新用ここまで
+
+	    //フォーム切り替えここから
+		const navItems = document.getElementsByClassName("nav-item");
+		const tabContents = document.getElementsByClassName("tab-pane");
+		for(let i=0;i<navItems.length;i++) {
+			navItems[i].addEventListener("click", () => {
+				for(let j=0;j<navItems.length;j++) navItems[j].getElementsByTagName('a')[0].classList.remove("active");
+				navItems[i].getElementsByTagName('a')[0].classList.add("active");
+
+				for(let j=0;j<tabContents.length;j++) tabContents[j].classList.remove("active");
+				tabContents[i].classList.add("active");
+			},false)
+		}
+
+		//フォーム切り替えここまで
+		/*]]>*/
+	</script>
+</body>
+</html>
