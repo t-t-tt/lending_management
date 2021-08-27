@@ -1,5 +1,7 @@
 package taro.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,6 @@ public class UserServiceTest {
 	})
 	public void generateUserTestData() {
 		UserEntity user = userService.findOneById(1);
-		System.out.println(user);
+		assertEquals(user.getAge(),49);
 	}
 }

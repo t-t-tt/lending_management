@@ -1,5 +1,7 @@
 package taro.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +59,6 @@ public class EquipServiceTest {
 	})
 	public void generateEquipTestData() {
 		EquipEntity equip = equipService.findOneById(1);
-		System.out.println(equip);
+		assertEquals(equip.getAsset(),"A19-06-001");
 	}
 }
